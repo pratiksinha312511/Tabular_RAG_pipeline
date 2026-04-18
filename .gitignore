@@ -1,0 +1,8 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+output/
+logs/
+*.egg-info/
+read_pdf.py

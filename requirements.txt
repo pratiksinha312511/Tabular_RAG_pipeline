@@ -1,0 +1,7 @@
+pandas
+matplotlib
+PyPDF2
+python-dotenv
+requests
+openpyxl
+numpy

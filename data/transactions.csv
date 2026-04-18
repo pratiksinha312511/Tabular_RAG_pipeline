@@ -1,0 +1,348 @@
+user_id,user_name,transaction_date,transaction_amount,transaction_category_detail,merchant_name
+usr_a1b2c3d4,Jose BazBaz,2025-05-01,1850,RENT_HOUSING,AvalonBay
+usr_a1b2c3d4,Jose BazBaz,2025-05-01,11,STREAMING_ENTERTAINMENT,Spotify
+usr_a1b2c3d4,Jose BazBaz,2025-05-01,89,GYM_HEALTH,Equinox
+usr_a1b2c3d4,Jose BazBaz,2025-05-01,142,INSURANCE_FINANCE,Geico
+usr_a1b2c3d4,Jose BazBaz,2025-05-01,-5200,SALARY_INCOME,Direct Deposit - Employer
+usr_a1b2c3d4,Jose BazBaz,2025-05-02,15,STREAMING_ENTERTAINMENT,Netflix
+usr_a1b2c3d4,Jose BazBaz,2025-05-03,80,INTERNET_HOUSING,Verizon Fios
+usr_a1b2c3d4,Jose BazBaz,2025-05-03,127,HOTELS_TRAVEL,Hilton
+usr_a1b2c3d4,Jose BazBaz,2025-05-12,50,RESTAURANT_FOOD,Panera Bread
+usr_a1b2c3d4,Jose BazBaz,2025-05-13,5,COFFEE_FOOD,Peet's Coffee
+usr_a1b2c3d4,Jose BazBaz,2025-05-13,114,INSURANCE_FINANCE,Progressive
+usr_a1b2c3d4,Jose BazBaz,2025-05-15,10,SUBSCRIPTION_FINANCE,Microsoft 365
+usr_a1b2c3d4,Jose BazBaz,2025-05-19,101,INSURANCE_FINANCE,Geico
+usr_a1b2c3d4,Jose BazBaz,2025-05-19,164,UTILITIES_HOUSING,Con Edison
+usr_a1b2c3d4,Jose BazBaz,2025-05-31,321,HOTELS_TRAVEL,Airbnb
+usr_a1b2c3d4,Jose BazBaz,2025-06-01,11,STREAMING_ENTERTAINMENT,Spotify
+usr_a1b2c3d4,Jose BazBaz,2025-06-01,-5200,SALARY_INCOME,Direct Deposit - Employer
+usr_a1b2c3d4,Jose BazBaz,2025-06-02,142,INSURANCE_FINANCE,Geico
+usr_a1b2c3d4,Jose BazBaz,2025-06-03,1850,RENT_HOUSING,AvalonBay
+usr_a1b2c3d4,Jose BazBaz,2025-06-03,80,INTERNET_HOUSING,Verizon Fios
+usr_a1b2c3d4,Jose BazBaz,2025-06-03,15,STREAMING_ENTERTAINMENT,Netflix
+usr_a1b2c3d4,Jose BazBaz,2025-06-03,89,GYM_HEALTH,Equinox
+usr_a1b2c3d4,Jose BazBaz,2025-06-05,20,FASTFOOD_FOOD,Chick-fil-A
+usr_a1b2c3d4,Jose BazBaz,2025-06-06,324,HOTELS_TRAVEL,Airbnb
+usr_a1b2c3d4,Jose BazBaz,2025-06-09,70,FUEL_TRANSPORT,Shell
+usr_a1b2c3d4,Jose BazBaz,2025-06-10,312,HOTELS_TRAVEL,Hilton
+usr_a1b2c3d4,Jose BazBaz,2025-06-11,71,GYM_HEALTH,LA Fitness
+usr_a1b2c3d4,Jose BazBaz,2025-06-11,97,GROCERIES_FOOD,Trader Joe's
+usr_a1b2c3d4,Jose BazBaz,2025-06-11,-120,REFUND_INCOME,Amazon Refund
+usr_a1b2c3d4,Jose BazBaz,2025-06-15,-13,REFUND_INCOME,Target Refund
+usr_a1b2c3d4,Jose BazBaz,2025-06-18,69,DOCTOR_HEALTH,One Medical
+usr_a1b2c3d4,Jose BazBaz,2025-06-22,76,INTERNET_HOUSING,Comcast Xfinity
+usr_a1b2c3d4,Jose BazBaz,2025-06-24,65,GYM_HEALTH,Planet Fitness
+usr_a1b2c3d4,Jose BazBaz,2025-06-24,203,UTILITIES_HOUSING,PG&E
+usr_a1b2c3d4,Jose BazBaz,2025-06-26,45,RIDESHARE_TRANSPORT,Lyft
+usr_a1b2c3d4,Jose BazBaz,2025-07-01,1850,RENT_HOUSING,AvalonBay
+usr_a1b2c3d4,Jose BazBaz,2025-07-01,80,INTERNET_HOUSING,Verizon Fios
+usr_a1b2c3d4,Jose BazBaz,2025-07-01,15,STREAMING_ENTERTAINMENT,Netflix
+usr_a1b2c3d4,Jose BazBaz,2025-07-01,11,STREAMING_ENTERTAINMENT,Spotify
+usr_a1b2c3d4,Jose BazBaz,2025-07-01,-5200,SALARY_INCOME,Direct Deposit - Employer
+usr_a1b2c3d4,Jose BazBaz,2025-07-03,89,GYM_HEALTH,Equinox
+usr_a1b2c3d4,Jose BazBaz,2025-07-03,142,INSURANCE_FINANCE,Geico
+usr_a1b2c3d4,Jose BazBaz,2025-07-11,-52,REFUND_INCOME,Target Refund
+usr_a1b2c3d4,Jose BazBaz,2025-08-01,80,INTERNET_HOUSING,Verizon Fios
+usr_a1b2c3d4,Jose BazBaz,2025-08-02,54,FUEL_TRANSPORT,Shell
+usr_a1b2c3d4,Jose BazBaz,2025-08-03,1850,RENT_HOUSING,AvalonBay
+usr_a1b2c3d4,Jose BazBaz,2025-08-03,15,STREAMING_ENTERTAINMENT,Netflix
+usr_a1b2c3d4,Jose BazBaz,2025-08-03,11,STREAMING_ENTERTAINMENT,Spotify
+usr_a1b2c3d4,Jose BazBaz,2025-08-03,89,GYM_HEALTH,Equinox
+usr_a1b2c3d4,Jose BazBaz,2025-08-03,142,INSURANCE_FINANCE,Geico
+usr_a1b2c3d4,Jose BazBaz,2025-08-04,-5200,SALARY_INCOME,Direct Deposit - Employer
+usr_a1b2c3d4,Jose BazBaz,2025-08-19,50,PHARMACY_HEALTH,CVS Pharmacy
+usr_a1b2c3d4,Jose BazBaz,2025-09-01,1850,RENT_HOUSING,AvalonBay
+usr_a1b2c3d4,Jose BazBaz,2025-09-01,89,GYM_HEALTH,Equinox
+usr_a1b2c3d4,Jose BazBaz,2025-09-01,142,INSURANCE_FINANCE,Geico
+usr_a1b2c3d4,Jose BazBaz,2025-09-02,80,INTERNET_HOUSING,Verizon Fios
+usr_a1b2c3d4,Jose BazBaz,2025-09-02,11,STREAMING_ENTERTAINMENT,Spotify
+usr_a1b2c3d4,Jose BazBaz,2025-09-03,15,STREAMING_ENTERTAINMENT,Netflix
+usr_a1b2c3d4,Jose BazBaz,2025-09-04,-5200,SALARY_INCOME,Direct Deposit - Employer
+usr_a1b2c3d4,Jose BazBaz,2025-09-04,90,GYM_HEALTH,Planet Fitness
+usr_a1b2c3d4,Jose BazBaz,2025-09-13,11,COFFEE_FOOD,Peet's Coffee
+usr_a1b2c3d4,Jose BazBaz,2025-09-15,90,INTERNET_HOUSING,Spectrum
+usr_a1b2c3d4,Jose BazBaz,2025-09-16,18,MOVIES_ENTERTAINMENT,Regal Cinemas
+usr_a1b2c3d4,Jose BazBaz,2025-09-23,137,CLOTHING_SHOPPING,Zara
+usr_a1b2c3d4,Jose BazBaz,2025-09-26,143,UTILITIES_HOUSING,Duke Energy
+usr_a1b2c3d4,Jose BazBaz,2025-09-28,85,UTILITIES_HOUSING,PG&E
+usr_a1b2c3d4,Jose BazBaz,2025-09-30,19,FASTFOOD_FOOD,Chick-fil-A
+usr_a1b2c3d4,Jose BazBaz,2025-09-30,14,MOVIES_ENTERTAINMENT,AMC Theatres
+usr_a1b2c3d4,Jose BazBaz,2025-10-01,15,STREAMING_ENTERTAINMENT,Netflix
+usr_a1b2c3d4,Jose BazBaz,2025-10-01,11,STREAMING_ENTERTAINMENT,Spotify
+usr_a1b2c3d4,Jose BazBaz,2025-10-01,142,INSURANCE_FINANCE,Geico
+usr_a1b2c3d4,Jose BazBaz,2025-10-01,-5200,SALARY_INCOME,Direct Deposit - Employer
+usr_a1b2c3d4,Jose BazBaz,2025-10-02,1850,RENT_HOUSING,AvalonBay
+usr_a1b2c3d4,Jose BazBaz,2025-10-02,80,INTERNET_HOUSING,Verizon Fios
+usr_a1b2c3d4,Jose BazBaz,2025-10-02,89,GYM_HEALTH,Equinox
+usr_a1b2c3d4,Jose BazBaz,2025-10-06,36,COURSES_EDUCATION,LinkedIn Learning
+usr_a1b2c3d4,Jose BazBaz,2025-10-12,-921,FREELANCE_INCOME,Stripe Payout
+usr_a1b2c3d4,Jose BazBaz,2025-10-16,364,FLIGHTS_TRAVEL,Delta Airlines
+usr_a1b2c3d4,Jose BazBaz,2025-10-16,-13,REFUND_INCOME,Amazon Refund
+usr_a1b2c3d4,Jose BazBaz,2025-10-19,66,SUPPLIES_PETS,PetSmart
+usr_a1b2c3d4,Jose BazBaz,2025-10-19,87,ELECTRONICS_SHOPPING,B&H Photo
+usr_a1b2c3d4,Jose BazBaz,2025-10-19,-112,CASHBACK_INCOME,Amex Reward
+usr_a1b2c3d4,Jose BazBaz,2025-10-27,44,GENERAL_SHOPPING,Walmart
+usr_a1b2c3d4,Jose BazBaz,2025-11-01,80,INTERNET_HOUSING,Verizon Fios
+usr_a1b2c3d4,Jose BazBaz,2025-11-01,-5200,SALARY_INCOME,Direct Deposit - Employer
+usr_a1b2c3d4,Jose BazBaz,2025-11-02,1850,RENT_HOUSING,AvalonBay
+usr_a1b2c3d4,Jose BazBaz,2025-11-02,15,STREAMING_ENTERTAINMENT,Netflix
+usr_a1b2c3d4,Jose BazBaz,2025-11-02,11,STREAMING_ENTERTAINMENT,Spotify
+usr_a1b2c3d4,Jose BazBaz,2025-11-02,142,INSURANCE_FINANCE,Geico
+usr_a1b2c3d4,Jose BazBaz,2025-11-03,89,GYM_HEALTH,Equinox
+usr_a1b2c3d4,Jose BazBaz,2025-11-03,120,GENERAL_SHOPPING,Target
+usr_a1b2c3d4,Jose BazBaz,2025-11-05,99,CLOTHING_SHOPPING,Nike
+usr_a1b2c3d4,Jose BazBaz,2025-11-11,5,COFFEE_FOOD,Dunkin'
+usr_a1b2c3d4,Jose BazBaz,2025-11-12,158,DOCTOR_HEALTH,One Medical
+usr_a1b2c3d4,Jose BazBaz,2025-11-14,44,SUPPLIES_PETS,Petco
+usr_a1b2c3d4,Jose BazBaz,2025-11-14,-685,FREELANCE_INCOME,Stripe Payout
+usr_a1b2c3d4,Jose BazBaz,2025-11-18,-30,REFUND_INCOME,Target Refund
+usr_a1b2c3d4,Jose BazBaz,2025-11-21,263,HOTELS_TRAVEL,Hilton
+usr_a1b2c3d4,Jose BazBaz,2025-11-26,-35,CASHBACK_INCOME,Chase Cashback
+usr_a1b2c3d4,Jose BazBaz,2025-11-27,24,COURSES_EDUCATION,Udemy
+usr_a1b2c3d4,Jose BazBaz,2025-11-27,-49,CASHBACK_INCOME,Amex Reward
+usr_a1b2c3d4,Jose BazBaz,2025-11-30,192,UTILITIES_HOUSING,Con Edison
+usr_a1b2c3d4,Jose BazBaz,2025-11-30,7,FASTFOOD_FOOD,Chick-fil-A
+usr_a1b2c3d4,Jose BazBaz,2025-12-01,11,STREAMING_ENTERTAINMENT,Spotify
+usr_a1b2c3d4,Jose BazBaz,2025-12-01,142,INSURANCE_FINANCE,Geico
+usr_a1b2c3d4,Jose BazBaz,2025-12-02,80,INTERNET_HOUSING,Verizon Fios
+usr_a1b2c3d4,Jose BazBaz,2025-12-02,89,GYM_HEALTH,Equinox
+usr_a1b2c3d4,Jose BazBaz,2025-12-03,1850,RENT_HOUSING,AvalonBay
+usr_a1b2c3d4,Jose BazBaz,2025-12-03,15,STREAMING_ENTERTAINMENT,Netflix
+usr_a1b2c3d4,Jose BazBaz,2025-12-05,-5200,SALARY_INCOME,Direct Deposit - Employer
+usr_a1b2c3d4,Jose BazBaz,2025-12-06,-14,REFUND_INCOME,Target Refund
+usr_a1b2c3d4,Jose BazBaz,2025-12-10,23,PHARMACY_HEALTH,Walgreens
+usr_a1b2c3d4,Jose BazBaz,2025-12-12,14,MOVIES_ENTERTAINMENT,Regal Cinemas
+usr_a1b2c3d4,Jose BazBaz,2025-12-24,207,FLIGHTS_TRAVEL,Delta Airlines
+usr_a1b2c3d4,Jose BazBaz,2025-12-24,154,INSURANCE_FINANCE,Allstate
+usr_a1b2c3d4,Jose BazBaz,2025-12-24,26,RIDESHARE_TRANSPORT,Lyft
+usr_a1b2c3d4,Jose BazBaz,2025-12-31,69,FUEL_TRANSPORT,Chevron
+usr_e5f6g7h8,Sarah Collins,2025-05-01,14,STREAMING_ENTERTAINMENT,Disney+
+usr_e5f6g7h8,Sarah Collins,2025-05-01,25,GYM_HEALTH,Planet Fitness
+usr_e5f6g7h8,Sarah Collins,2025-05-01,120,UTILITIES_HOUSING,Con Edison
+usr_e5f6g7h8,Sarah Collins,2025-05-02,18,STREAMING_ENTERTAINMENT,Hulu
+usr_e5f6g7h8,Sarah Collins,2025-05-02,195,INSURANCE_FINANCE,State Farm
+usr_e5f6g7h8,Sarah Collins,2025-05-02,-4600,SALARY_INCOME,Direct Deposit - Employer
+usr_e5f6g7h8,Sarah Collins,2025-05-03,2100,RENT_HOUSING,Equity Residential
+usr_e5f6g7h8,Sarah Collins,2025-05-03,70,INTERNET_HOUSING,Comcast Xfinity
+usr_e5f6g7h8,Sarah Collins,2025-05-04,31,COURSES_EDUCATION,LinkedIn Learning
+usr_e5f6g7h8,Sarah Collins,2025-05-04,63,CLOTHING_SHOPPING,Zara
+usr_e5f6g7h8,Sarah Collins,2025-05-09,26,PHARMACY_HEALTH,Walgreens
+usr_e5f6g7h8,Sarah Collins,2025-05-14,12,COFFEE_FOOD,Peet's Coffee
+usr_e5f6g7h8,Sarah Collins,2025-05-14,9,STREAMING_ENTERTAINMENT,Hulu
+usr_e5f6g7h8,Sarah Collins,2025-05-19,196,UTILITIES_HOUSING,PG&E
+usr_e5f6g7h8,Sarah Collins,2025-05-20,50,GYM_HEALTH,LA Fitness
+usr_e5f6g7h8,Sarah Collins,2025-05-21,218,UTILITIES_HOUSING,PG&E
+usr_e5f6g7h8,Sarah Collins,2025-05-22,33,MOVIES_ENTERTAINMENT,AMC Theatres
+usr_e5f6g7h8,Sarah Collins,2025-05-28,54,SUPPLIES_PETS,Chewy
+usr_e5f6g7h8,Sarah Collins,2025-06-01,18,STREAMING_ENTERTAINMENT,Hulu
+usr_e5f6g7h8,Sarah Collins,2025-06-01,14,STREAMING_ENTERTAINMENT,Disney+
+usr_e5f6g7h8,Sarah Collins,2025-06-02,70,INTERNET_HOUSING,Comcast Xfinity
+usr_e5f6g7h8,Sarah Collins,2025-06-02,195,INSURANCE_FINANCE,State Farm
+usr_e5f6g7h8,Sarah Collins,2025-06-03,2100,RENT_HOUSING,Equity Residential
+usr_e5f6g7h8,Sarah Collins,2025-06-03,25,GYM_HEALTH,Planet Fitness
+usr_e5f6g7h8,Sarah Collins,2025-06-03,-4600,SALARY_INCOME,Direct Deposit - Employer
+usr_e5f6g7h8,Sarah Collins,2025-06-04,37,COURSES_EDUCATION,LinkedIn Learning
+usr_e5f6g7h8,Sarah Collins,2025-06-06,-115,REFUND_INCOME,Target Refund
+usr_e5f6g7h8,Sarah Collins,2025-06-07,46,SUPPLIES_PETS,PetSmart
+usr_e5f6g7h8,Sarah Collins,2025-06-10,131,HOTELS_TRAVEL,Airbnb
+usr_e5f6g7h8,Sarah Collins,2025-06-23,540,FLIGHTS_TRAVEL,Delta Airlines
+usr_e5f6g7h8,Sarah Collins,2025-06-24,365,ELECTRONICS_SHOPPING,B&H Photo
+usr_e5f6g7h8,Sarah Collins,2025-06-27,-79,CASHBACK_INCOME,Chase Cashback
+usr_e5f6g7h8,Sarah Collins,2025-07-01,195,INSURANCE_FINANCE,State Farm
+usr_e5f6g7h8,Sarah Collins,2025-07-01,119,UTILITIES_HOUSING,Con Edison
+usr_e5f6g7h8,Sarah Collins,2025-07-02,70,INTERNET_HOUSING,Comcast Xfinity
+usr_e5f6g7h8,Sarah Collins,2025-07-02,18,STREAMING_ENTERTAINMENT,Hulu
+usr_e5f6g7h8,Sarah Collins,2025-07-03,2100,RENT_HOUSING,Equity Residential
+usr_e5f6g7h8,Sarah Collins,2025-07-03,14,STREAMING_ENTERTAINMENT,Disney+
+usr_e5f6g7h8,Sarah Collins,2025-07-03,25,GYM_HEALTH,Planet Fitness
+usr_e5f6g7h8,Sarah Collins,2025-07-04,-4600,SALARY_INCOME,Direct Deposit - Employer
+usr_e5f6g7h8,Sarah Collins,2025-07-10,76,SUPPLIES_PETS,Chewy
+usr_e5f6g7h8,Sarah Collins,2025-07-12,16,STREAMING_ENTERTAINMENT,Netflix
+usr_e5f6g7h8,Sarah Collins,2025-07-13,63,CLOTHING_SHOPPING,Nike
+usr_e5f6g7h8,Sarah Collins,2025-07-14,90,INTERNET_HOUSING,Comcast Xfinity
+usr_e5f6g7h8,Sarah Collins,2025-07-16,16,SUBSCRIPTION_FINANCE,Adobe
+usr_e5f6g7h8,Sarah Collins,2025-07-18,169,INSURANCE_FINANCE,Allstate
+usr_e5f6g7h8,Sarah Collins,2025-07-20,67,INTERNET_HOUSING,Spectrum
+usr_e5f6g7h8,Sarah Collins,2025-07-23,127,DOCTOR_HEALTH,One Medical
+usr_e5f6g7h8,Sarah Collins,2025-08-01,70,INTERNET_HOUSING,Comcast Xfinity
+usr_e5f6g7h8,Sarah Collins,2025-08-01,14,STREAMING_ENTERTAINMENT,Disney+
+usr_e5f6g7h8,Sarah Collins,2025-08-01,-4600,SALARY_INCOME,Direct Deposit - Employer
+usr_e5f6g7h8,Sarah Collins,2025-08-02,18,STREAMING_ENTERTAINMENT,Hulu
+usr_e5f6g7h8,Sarah Collins,2025-08-02,195,INSURANCE_FINANCE,State Farm
+usr_e5f6g7h8,Sarah Collins,2025-08-03,2100,RENT_HOUSING,Equity Residential
+usr_e5f6g7h8,Sarah Collins,2025-08-03,25,GYM_HEALTH,Planet Fitness
+usr_e5f6g7h8,Sarah Collins,2025-08-03,2185,RENT_HOUSING,Equity Residential
+usr_e5f6g7h8,Sarah Collins,2025-08-16,243,DOCTOR_HEALTH,Kaiser Permanente
+usr_e5f6g7h8,Sarah Collins,2025-08-21,20,MOVIES_ENTERTAINMENT,AMC Theatres
+usr_e5f6g7h8,Sarah Collins,2025-08-23,77,SUPPLIES_PETS,Petco
+usr_e5f6g7h8,Sarah Collins,2025-08-27,212,UTILITIES_HOUSING,Duke Energy
+usr_e5f6g7h8,Sarah Collins,2025-08-28,-25,CASHBACK_INCOME,Amex Reward
+usr_e5f6g7h8,Sarah Collins,2025-08-30,174,UTILITIES_HOUSING,Duke Energy
+usr_e5f6g7h8,Sarah Collins,2025-09-02,-4600,SALARY_INCOME,Direct Deposit - Employer
+usr_e5f6g7h8,Sarah Collins,2025-09-02,191,UTILITIES_HOUSING,PG&E
+usr_e5f6g7h8,Sarah Collins,2025-09-03,2100,RENT_HOUSING,Equity Residential
+usr_e5f6g7h8,Sarah Collins,2025-09-03,70,INTERNET_HOUSING,Comcast Xfinity
+usr_e5f6g7h8,Sarah Collins,2025-09-03,18,STREAMING_ENTERTAINMENT,Hulu
+usr_e5f6g7h8,Sarah Collins,2025-09-03,14,STREAMING_ENTERTAINMENT,Disney+
+usr_e5f6g7h8,Sarah Collins,2025-09-03,25,GYM_HEALTH,Planet Fitness
+usr_e5f6g7h8,Sarah Collins,2025-09-03,195,INSURANCE_FINANCE,State Farm
+usr_e5f6g7h8,Sarah Collins,2025-09-03,1816,RENT_HOUSING,Greystar
+usr_e5f6g7h8,Sarah Collins,2025-09-03,13,STREAMING_ENTERTAINMENT,Netflix
+usr_e5f6g7h8,Sarah Collins,2025-09-16,1738,RENT_HOUSING,Equity Residential
+usr_e5f6g7h8,Sarah Collins,2025-09-20,72,INTERNET_HOUSING,Spectrum
+usr_e5f6g7h8,Sarah Collins,2025-09-20,40,CLOTHING_SHOPPING,Zara
+usr_e5f6g7h8,Sarah Collins,2025-09-21,22,FASTFOOD_FOOD,Wendy's
+usr_e5f6g7h8,Sarah Collins,2025-09-23,108,DOCTOR_HEALTH,One Medical
+usr_e5f6g7h8,Sarah Collins,2025-09-28,50,COURSES_EDUCATION,Coursera
+usr_e5f6g7h8,Sarah Collins,2025-10-01,18,STREAMING_ENTERTAINMENT,Hulu
+usr_e5f6g7h8,Sarah Collins,2025-10-02,2100,RENT_HOUSING,Equity Residential
+usr_e5f6g7h8,Sarah Collins,2025-10-02,70,INTERNET_HOUSING,Comcast Xfinity
+usr_e5f6g7h8,Sarah Collins,2025-10-02,25,GYM_HEALTH,Planet Fitness
+usr_e5f6g7h8,Sarah Collins,2025-10-03,14,STREAMING_ENTERTAINMENT,Disney+
+usr_e5f6g7h8,Sarah Collins,2025-10-03,195,INSURANCE_FINANCE,State Farm
+usr_e5f6g7h8,Sarah Collins,2025-10-03,-4600,SALARY_INCOME,Direct Deposit - Employer
+usr_e5f6g7h8,Sarah Collins,2025-10-04,65,FUEL_TRANSPORT,Chevron
+usr_e5f6g7h8,Sarah Collins,2025-10-11,20,STREAMING_ENTERTAINMENT,Spotify
+usr_e5f6g7h8,Sarah Collins,2025-10-14,109,GENERAL_SHOPPING,Amazon
+usr_e5f6g7h8,Sarah Collins,2025-10-15,2021,RENT_HOUSING,Greystar
+usr_e5f6g7h8,Sarah Collins,2025-10-21,23,SUBSCRIPTION_FINANCE,iCloud
+usr_e5f6g7h8,Sarah Collins,2025-10-25,133,GROCERIES_FOOD,Trader Joe's
+usr_e5f6g7h8,Sarah Collins,2025-10-28,44,FUEL_TRANSPORT,BP
+usr_e5f6g7h8,Sarah Collins,2025-10-29,20,FASTFOOD_FOOD,Taco Bell
+usr_e5f6g7h8,Sarah Collins,2025-10-31,7,COFFEE_FOOD,Peet's Coffee
+usr_e5f6g7h8,Sarah Collins,2025-11-01,70,INTERNET_HOUSING,Comcast Xfinity
+usr_e5f6g7h8,Sarah Collins,2025-11-02,14,STREAMING_ENTERTAINMENT,Disney+
+usr_e5f6g7h8,Sarah Collins,2025-11-02,195,INSURANCE_FINANCE,State Farm
+usr_e5f6g7h8,Sarah Collins,2025-11-03,2100,RENT_HOUSING,Equity Residential
+usr_e5f6g7h8,Sarah Collins,2025-11-03,18,STREAMING_ENTERTAINMENT,Hulu
+usr_e5f6g7h8,Sarah Collins,2025-11-03,25,GYM_HEALTH,Planet Fitness
+usr_e5f6g7h8,Sarah Collins,2025-11-04,-4600,SALARY_INCOME,Direct Deposit - Employer
+usr_e5f6g7h8,Sarah Collins,2025-11-07,17,MOVIES_ENTERTAINMENT,Regal Cinemas
+usr_e5f6g7h8,Sarah Collins,2025-11-09,7,COFFEE_FOOD,Dunkin'
+usr_e5f6g7h8,Sarah Collins,2025-11-19,-31,REFUND_INCOME,Amazon Refund
+usr_e5f6g7h8,Sarah Collins,2025-11-21,201,ELECTRONICS_SHOPPING,Best Buy
+usr_e5f6g7h8,Sarah Collins,2025-11-23,74,FUEL_TRANSPORT,ExxonMobil
+usr_e5f6g7h8,Sarah Collins,2025-11-25,463,FLIGHTS_TRAVEL,JetBlue
+usr_e5f6g7h8,Sarah Collins,2025-11-28,-105,CASHBACK_INCOME,Citi Cashback
+usr_e5f6g7h8,Sarah Collins,2025-11-30,57,GYM_HEALTH,Equinox
+usr_e5f6g7h8,Sarah Collins,2025-12-01,195,INSURANCE_FINANCE,State Farm
+usr_e5f6g7h8,Sarah Collins,2025-12-02,2100,RENT_HOUSING,Equity Residential
+usr_e5f6g7h8,Sarah Collins,2025-12-02,70,INTERNET_HOUSING,Comcast Xfinity
+usr_e5f6g7h8,Sarah Collins,2025-12-02,14,STREAMING_ENTERTAINMENT,Disney+
+usr_e5f6g7h8,Sarah Collins,2025-12-02,-4600,SALARY_INCOME,Direct Deposit - Employer
+usr_e5f6g7h8,Sarah Collins,2025-12-02,72,GROCERIES_FOOD,Safeway
+usr_e5f6g7h8,Sarah Collins,2025-12-03,18,STREAMING_ENTERTAINMENT,Hulu
+usr_e5f6g7h8,Sarah Collins,2025-12-03,25,GYM_HEALTH,Planet Fitness
+usr_e5f6g7h8,Sarah Collins,2025-12-04,244,HOTELS_TRAVEL,Airbnb
+usr_e5f6g7h8,Sarah Collins,2025-12-04,41,COURSES_EDUCATION,Udemy
+usr_e5f6g7h8,Sarah Collins,2025-12-05,112,DOCTOR_HEALTH,One Medical
+usr_e5f6g7h8,Sarah Collins,2025-12-12,2179,RENT_HOUSING,Equity Residential
+usr_e5f6g7h8,Sarah Collins,2025-12-19,380,FLIGHTS_TRAVEL,JetBlue
+usr_e5f6g7h8,Sarah Collins,2025-12-29,71,FUEL_TRANSPORT,Shell
+usr_e5f6g7h8,Sarah Collins,2025-12-29,46,COURSES_EDUCATION,Udemy
+usr_i9j0k1l2,Marcus Johnson,2025-05-01,60,PHARMACY_HEALTH,Walgreens
+usr_i9j0k1l2,Marcus Johnson,2025-05-02,60,INTERNET_HOUSING,Spectrum
+usr_i9j0k1l2,Marcus Johnson,2025-05-02,35,GYM_HEALTH,LA Fitness
+usr_i9j0k1l2,Marcus Johnson,2025-05-02,118,INSURANCE_FINANCE,Progressive
+usr_i9j0k1l2,Marcus Johnson,2025-05-03,1650,RENT_HOUSING,Greystar
+usr_i9j0k1l2,Marcus Johnson,2025-05-03,14,STREAMING_ENTERTAINMENT,YouTube Premium
+usr_i9j0k1l2,Marcus Johnson,2025-05-03,23,SUBSCRIPTION_FINANCE,Adobe
+usr_i9j0k1l2,Marcus Johnson,2025-05-04,-414,FREELANCE_INCOME,Stripe Payout
+usr_i9j0k1l2,Marcus Johnson,2025-05-05,-3800,SALARY_INCOME,Direct Deposit - Employer
+usr_i9j0k1l2,Marcus Johnson,2025-05-06,14,SUBSCRIPTION_FINANCE,Microsoft 365
+usr_i9j0k1l2,Marcus Johnson,2025-05-07,70,GENERAL_SHOPPING,Amazon
+usr_i9j0k1l2,Marcus Johnson,2025-05-12,-27,CASHBACK_INCOME,Chase Cashback
+usr_i9j0k1l2,Marcus Johnson,2025-05-26,-93,REFUND_INCOME,Target Refund
+usr_i9j0k1l2,Marcus Johnson,2025-05-30,-73,REFUND_INCOME,Target Refund
+usr_i9j0k1l2,Marcus Johnson,2025-06-01,60,INTERNET_HOUSING,Spectrum
+usr_i9j0k1l2,Marcus Johnson,2025-06-01,35,GYM_HEALTH,LA Fitness
+usr_i9j0k1l2,Marcus Johnson,2025-06-02,1650,RENT_HOUSING,Greystar
+usr_i9j0k1l2,Marcus Johnson,2025-06-02,118,INSURANCE_FINANCE,Progressive
+usr_i9j0k1l2,Marcus Johnson,2025-06-03,14,STREAMING_ENTERTAINMENT,YouTube Premium
+usr_i9j0k1l2,Marcus Johnson,2025-06-03,23,SUBSCRIPTION_FINANCE,Adobe
+usr_i9j0k1l2,Marcus Johnson,2025-06-03,-3800,SALARY_INCOME,Direct Deposit - Employer
+usr_i9j0k1l2,Marcus Johnson,2025-06-04,-78,REFUND_INCOME,Amazon Refund
+usr_i9j0k1l2,Marcus Johnson,2025-06-05,-414,FREELANCE_INCOME,Stripe Payout
+usr_i9j0k1l2,Marcus Johnson,2025-06-29,19,COURSES_EDUCATION,LinkedIn Learning
+usr_i9j0k1l2,Marcus Johnson,2025-07-01,60,INTERNET_HOUSING,Spectrum
+usr_i9j0k1l2,Marcus Johnson,2025-07-01,14,STREAMING_ENTERTAINMENT,YouTube Premium
+usr_i9j0k1l2,Marcus Johnson,2025-07-01,35,GYM_HEALTH,LA Fitness
+usr_i9j0k1l2,Marcus Johnson,2025-07-01,-414,FREELANCE_INCOME,Stripe Payout
+usr_i9j0k1l2,Marcus Johnson,2025-07-02,1650,RENT_HOUSING,Greystar
+usr_i9j0k1l2,Marcus Johnson,2025-07-02,85,INTERNET_HOUSING,Verizon Fios
+usr_i9j0k1l2,Marcus Johnson,2025-07-03,118,INSURANCE_FINANCE,Progressive
+usr_i9j0k1l2,Marcus Johnson,2025-07-03,23,SUBSCRIPTION_FINANCE,Adobe
+usr_i9j0k1l2,Marcus Johnson,2025-07-04,89,GENERAL_SHOPPING,Amazon
+usr_i9j0k1l2,Marcus Johnson,2025-07-05,-3800,SALARY_INCOME,Direct Deposit - Employer
+usr_i9j0k1l2,Marcus Johnson,2025-07-07,103,INSURANCE_FINANCE,Allstate
+usr_i9j0k1l2,Marcus Johnson,2025-07-08,194,HOTELS_TRAVEL,Marriott
+usr_i9j0k1l2,Marcus Johnson,2025-07-31,105,GROCERIES_FOOD,Whole Foods
+usr_i9j0k1l2,Marcus Johnson,2025-07-31,16,STREAMING_ENTERTAINMENT,Disney+
+usr_i9j0k1l2,Marcus Johnson,2025-08-01,35,GYM_HEALTH,LA Fitness
+usr_i9j0k1l2,Marcus Johnson,2025-08-01,118,INSURANCE_FINANCE,Progressive
+usr_i9j0k1l2,Marcus Johnson,2025-08-01,162,DOCTOR_HEALTH,Kaiser Permanente
+usr_i9j0k1l2,Marcus Johnson,2025-08-02,60,INTERNET_HOUSING,Spectrum
+usr_i9j0k1l2,Marcus Johnson,2025-08-02,23,SUBSCRIPTION_FINANCE,Adobe
+usr_i9j0k1l2,Marcus Johnson,2025-08-03,1650,RENT_HOUSING,Greystar
+usr_i9j0k1l2,Marcus Johnson,2025-08-03,14,STREAMING_ENTERTAINMENT,YouTube Premium
+usr_i9j0k1l2,Marcus Johnson,2025-08-04,-414,FREELANCE_INCOME,Stripe Payout
+usr_i9j0k1l2,Marcus Johnson,2025-08-05,-3800,SALARY_INCOME,Direct Deposit - Employer
+usr_i9j0k1l2,Marcus Johnson,2025-08-13,45,RIDESHARE_TRANSPORT,Uber
+usr_i9j0k1l2,Marcus Johnson,2025-08-14,77,GENERAL_SHOPPING,Amazon
+usr_i9j0k1l2,Marcus Johnson,2025-08-22,5,COFFEE_FOOD,Starbucks
+usr_i9j0k1l2,Marcus Johnson,2025-08-28,235,DOCTOR_HEALTH,Kaiser Permanente
+usr_i9j0k1l2,Marcus Johnson,2025-08-29,39,FUEL_TRANSPORT,Chevron
+usr_i9j0k1l2,Marcus Johnson,2025-09-01,60,INTERNET_HOUSING,Spectrum
+usr_i9j0k1l2,Marcus Johnson,2025-09-01,-3800,SALARY_INCOME,Direct Deposit - Employer
+usr_i9j0k1l2,Marcus Johnson,2025-09-02,1650,RENT_HOUSING,Greystar
+usr_i9j0k1l2,Marcus Johnson,2025-09-02,35,GYM_HEALTH,LA Fitness
+usr_i9j0k1l2,Marcus Johnson,2025-09-02,23,SUBSCRIPTION_FINANCE,Adobe
+usr_i9j0k1l2,Marcus Johnson,2025-09-03,14,STREAMING_ENTERTAINMENT,YouTube Premium
+usr_i9j0k1l2,Marcus Johnson,2025-09-03,118,INSURANCE_FINANCE,Progressive
+usr_i9j0k1l2,Marcus Johnson,2025-09-04,-414,FREELANCE_INCOME,Stripe Payout
+usr_i9j0k1l2,Marcus Johnson,2025-09-04,44,GYM_HEALTH,LA Fitness
+usr_i9j0k1l2,Marcus Johnson,2025-09-15,38,COURSES_EDUCATION,Udemy
+usr_i9j0k1l2,Marcus Johnson,2025-09-16,58,PHARMACY_HEALTH,CVS Pharmacy
+usr_i9j0k1l2,Marcus Johnson,2025-09-17,19,STREAMING_ENTERTAINMENT,YouTube Premium
+usr_i9j0k1l2,Marcus Johnson,2025-09-27,167,INSURANCE_FINANCE,Progressive
+usr_i9j0k1l2,Marcus Johnson,2025-10-01,23,SUBSCRIPTION_FINANCE,Adobe
+usr_i9j0k1l2,Marcus Johnson,2025-10-02,1650,RENT_HOUSING,Greystar
+usr_i9j0k1l2,Marcus Johnson,2025-10-02,60,INTERNET_HOUSING,Spectrum
+usr_i9j0k1l2,Marcus Johnson,2025-10-02,14,STREAMING_ENTERTAINMENT,YouTube Premium
+usr_i9j0k1l2,Marcus Johnson,2025-10-02,35,GYM_HEALTH,LA Fitness
+usr_i9j0k1l2,Marcus Johnson,2025-10-02,-3800,SALARY_INCOME,Direct Deposit - Employer
+usr_i9j0k1l2,Marcus Johnson,2025-10-03,118,INSURANCE_FINANCE,Progressive
+usr_i9j0k1l2,Marcus Johnson,2025-10-03,-414,FREELANCE_INCOME,Stripe Payout
+usr_i9j0k1l2,Marcus Johnson,2025-10-06,34,RIDESHARE_TRANSPORT,Uber
+usr_i9j0k1l2,Marcus Johnson,2025-10-10,116,INSURANCE_FINANCE,Geico
+usr_i9j0k1l2,Marcus Johnson,2025-10-11,29,RIDESHARE_TRANSPORT,Lyft
+usr_i9j0k1l2,Marcus Johnson,2025-10-14,80,INTERNET_HOUSING,Spectrum
+usr_i9j0k1l2,Marcus Johnson,2025-10-19,-57,CASHBACK_INCOME,Amex Reward
+usr_i9j0k1l2,Marcus Johnson,2025-10-26,49,GYM_HEALTH,Equinox
+usr_i9j0k1l2,Marcus Johnson,2025-10-28,67,FUEL_TRANSPORT,ExxonMobil
+usr_i9j0k1l2,Marcus Johnson,2025-10-29,45,SUPPLIES_PETS,Chewy
+usr_i9j0k1l2,Marcus Johnson,2025-11-01,-414,FREELANCE_INCOME,Stripe Payout
+usr_i9j0k1l2,Marcus Johnson,2025-11-01,33,DOCTOR_HEALTH,One Medical
+usr_i9j0k1l2,Marcus Johnson,2025-11-02,1650,RENT_HOUSING,Greystar
+usr_i9j0k1l2,Marcus Johnson,2025-11-02,14,STREAMING_ENTERTAINMENT,YouTube Premium
+usr_i9j0k1l2,Marcus Johnson,2025-11-02,35,GYM_HEALTH,LA Fitness
+usr_i9j0k1l2,Marcus Johnson,2025-11-02,23,SUBSCRIPTION_FINANCE,Adobe
+usr_i9j0k1l2,Marcus Johnson,2025-11-03,60,INTERNET_HOUSING,Spectrum
+usr_i9j0k1l2,Marcus Johnson,2025-11-03,118,INSURANCE_FINANCE,Progressive
+usr_i9j0k1l2,Marcus Johnson,2025-11-03,-105,CASHBACK_INCOME,Citi Cashback
+usr_i9j0k1l2,Marcus Johnson,2025-11-05,-3800,SALARY_INCOME,Direct Deposit - Employer
+usr_i9j0k1l2,Marcus Johnson,2025-11-08,90,GYM_HEALTH,LA Fitness
+usr_i9j0k1l2,Marcus Johnson,2025-11-08,55,FUEL_TRANSPORT,ExxonMobil
+usr_i9j0k1l2,Marcus Johnson,2025-12-01,60,INTERNET_HOUSING,Spectrum
+usr_i9j0k1l2,Marcus Johnson,2025-12-01,23,SUBSCRIPTION_FINANCE,Adobe
+usr_i9j0k1l2,Marcus Johnson,2025-12-02,1650,RENT_HOUSING,Greystar
+usr_i9j0k1l2,Marcus Johnson,2025-12-02,14,STREAMING_ENTERTAINMENT,YouTube Premium
+usr_i9j0k1l2,Marcus Johnson,2025-12-02,35,GYM_HEALTH,LA Fitness
+usr_i9j0k1l2,Marcus Johnson,2025-12-02,118,INSURANCE_FINANCE,Progressive
+usr_i9j0k1l2,Marcus Johnson,2025-12-04,-3800,SALARY_INCOME,Direct Deposit - Employer
+usr_i9j0k1l2,Marcus Johnson,2025-12-05,-414,FREELANCE_INCOME,Stripe Payout
+usr_i9j0k1l2,Marcus Johnson,2025-12-08,46,COURSES_EDUCATION,Udemy
+usr_i9j0k1l2,Marcus Johnson,2025-12-10,27,RESTAURANT_FOOD,Cheesecake Factory
+usr_i9j0k1l2,Marcus Johnson,2025-12-12,212,INSURANCE_FINANCE,Progressive
+usr_i9j0k1l2,Marcus Johnson,2025-12-20,53,PHARMACY_HEALTH,Walgreens
+usr_i9j0k1l2,Marcus Johnson,2025-12-29,11,COFFEE_FOOD,Starbucks
