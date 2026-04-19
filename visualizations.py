@@ -33,13 +33,13 @@ _CYAN      = "#45B7D1"   # info / rolling avg
 
 # Premium colour palette for categories / series
 _PALETTE = [
-    "#6C5CE7", "#00D68F", "#FF6B6B", "#FFA502", "#4ECDC4",
+    "#7C3AED", "#00D4AA", "#FF6B6B", "#FFA502", "#4ECDC4",
     "#45B7D1", "#A78BFA", "#F472B6", "#FBBF24", "#34D399",
     "#818CF8", "#FB923C", "#38BDF8", "#E879F9", "#2DD4BF",
 ]
 
 # Gradient palette for histograms / heatmaps
-_GRADIENT = ["#00D68F", "#4ECDC4", "#45B7D1", "#6C5CE7", "#A78BFA", "#F472B6", "#FF6B6B"]
+_GRADIENT = ["#00D4AA", "#4ECDC4", "#45B7D1", "#7C3AED", "#A78BFA", "#F472B6", "#FF6B6B"]
 
 def _base_layout(title: str, **kwargs) -> dict:
     """Return a shared Plotly layout dict for the premium dark theme."""
@@ -367,7 +367,15 @@ def _filter_months(df: pd.DataFrame, months: int) -> pd.DataFrame:
 
 
 def _period_to_months(period: str) -> int:
-    return {"last_month": 1, "last_3_months": 3, "last_6_months": 6, "all_time": 120}.get(period, 3)
+    fixed = {"last_month": 1, "last_3_months": 3, "last_6_months": 6, "all_time": 120}
+    if period in fixed:
+        return fixed[period]
+    # Dynamic: "last_N_months" → N
+    import re
+    m = re.match(r"last_(\d+)_months?", period)
+    if m:
+        return int(m.group(1))
+    return 3  # default
 
 
 def _save(fig: go.Figure, user_name: str, tag: str) -> str:
@@ -454,9 +462,12 @@ def plot_category_breakdown(
     user_id: str,
     period: str = "last_3_months",
     top_n: int = 7,
+    months: int | None = None,
 ) -> str:
     udf = _user_df(df, user_id)
-    udf = _filter_months(udf, _period_to_months(period))
+    # months param overrides period string when provided
+    filter_months = months if months is not None else _period_to_months(period)
+    udf = _filter_months(udf, filter_months)
     expenses = udf[udf["transaction_amount"] > 0]
     if expenses.empty:
         return ""

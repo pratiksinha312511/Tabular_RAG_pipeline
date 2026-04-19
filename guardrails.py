@@ -50,13 +50,71 @@ FINANCIAL_KEYWORDS = [
     "cost", "pay", "paid", "bill", "subscription",
     "food", "rent", "housing", "transport", "health",
     "entertainment", "shopping", "insurance", "gym",
+    # Category names (friendly + raw) so users can respond with just a category
+    "groceries", "grocery", "coffee", "cafe", "restaurant", "dining",
+    "fast food", "fastfood", "clothing", "clothes", "electronics",
+    "flights", "flight", "travel", "hotels", "hotel",
+    "fuel", "gas", "rideshare", "taxi", "uber", "lyft",
+    "pharmacy", "doctor", "medical", "movies", "movie", "cinema",
+    "streaming", "courses", "education", "freelance",
+    "pet", "pets", "pet supplies", "utilities", "internet",
+    "refund", "refunds", "cashback",
     "compare", "vs", "versus", "between", "last", "this",
     "doing", "financially", "overview", "analysis",
+    "finance", "finances", "manage", "managing",
+    "best way", "tip", "tips", "strategy", "strategies",
     # Follow-up / graph / conversational keywords
     "graph", "visual", "better", "more", "detail", "redo",
     "improve", "another", "different", "again", "elaborate",
     "explain", "help", "advice", "recommend", "suggest",
     "afford", "reduce", "cut", "earn", "received", "credit",
+    "subscription", "subscriptions", "recurring", "cancel",
+    "streaming", "membership", "autopay", "vola", "cash advance",
+    "credit score", "creditmap", "rent reporting", "mobile plan",
+]
+
+# Conversational / meta phrases that should ALWAYS pass scope check.
+# These are greetings, capability questions, and polite exchanges
+# that the pipeline's fallback engine handles with rich responses.
+_CONVERSATIONAL_PATTERNS = [
+    # Greetings
+    r"^hi$", r"^hi[!. ]", r"^hey", r"^hello", r"^good\s+(morning|afternoon|evening|day)",
+    r"^howdy", r"^yo$", r"^yo[!. ]", r"^sup$", r"^greetings",
+    # Capability / meta questions
+    r"what\s+(can|do)\s+you\s+(do|help|offer|know|analyze|support)",
+    r"what\s+are\s+(your|the)\s+(features|functionalities|capabilities|functions|abilities|skills|options)",
+    r"what\s+is\s+your\s+(scope|purpose|role|job|function)",
+    r"how\s+(can|do)\s+you\s+help",
+    r"what\s+else\s+can\s+you",
+    r"what\s+should\s+i\s+ask",
+    r"what\s+kind\s+of\s+(questions|things|queries|analysis)",
+    r"show\s+me\s+what\s+you\s+can",
+    r"what\s+do\s+you\s+know",
+    r"who\s+are\s+you",
+    r"what\s+are\s+you",
+    r"tell\s+me\s+about\s+(yourself|you)",
+    r"introduce\s+yourself",
+    r"what\s+is\s+(this|vola|vola\s*ai|vola\s*finance)",
+    r"how\s+does\s+this\s+(work|app|tool|platform)",
+    # Vola product queries
+    r"(should|can)\s+i\s+(get|take|start|subscribe|use)\s+(a\s+)?(vola|subscription|membership|cash\s+advance)",
+    r"how\s+much\s+(does|is|for)\s+(vola|subscription|membership|cash\s+advance)",
+    r"what\s+(is|are)\s+(vola|cash\s+advance|credit\s*map|credit\s*builder|subscription\s*tracker)",
+    r"(tell|know)\s+(me\s+)?about\s+(vola|cash\s+advance|credit|subscription)",
+    # Polite exchanges
+    r"^thanks?", r"^thank\s+you", r"^appreciate", r"^great$", r"^awesome",
+    r"^perfect", r"^nice$", r"^good\s+job", r"^well\s+done",
+    r"^ok$", r"^okay$", r"^got\s+it", r"^understood", r"^cool$",
+    # Short follow-up replies (yes/no/numbers) — these are continuations of
+    # a prior conversation turn where the AI offered options or asked a question.
+    r"^yes$", r"^yes[!., ]", r"^yeah", r"^yep", r"^yup", r"^sure", r"^absolutely",
+    r"^no$", r"^no[!., ]", r"^nah", r"^nope", r"^not really",
+    r"^[1-9]$", r"^option\s*[1-9]", r"^choice\s*[1-9]",
+    r"^go\s+(ahead|for\s+it)", r"^do\s+it", r"^please$", r"^please\s+do",
+    r"^let'?s\s+(do|go|see|try)", r"^show\s+me", r"^tell\s+me",
+    r"^the\s+(first|second|third|1st|2nd|3rd)", r"^both", r"^all\s+of\s+(them|the\s+above)",
+    r"^why\s+not", r"^sounds\s+good", r"^that\s+(works|sounds|would\s+be)",
+    r"^i'?d\s+(like|love|prefer|want)", r"^definitely", r"^of\s+course",
 ]
 
 # These only count if paired with a financial keyword above
@@ -76,7 +134,14 @@ def check_prompt_injection(prompt: str) -> Optional[str]:
 
 
 def check_scope(prompt: str) -> Optional[str]:
-    prompt_lower = prompt.lower()
+    prompt_lower = prompt.lower().strip()
+
+    # Always allow conversational / meta queries through — the pipeline
+    # fallback engine handles these with rich, persona-driven responses.
+    for pattern in _CONVERSATIONAL_PATTERNS:
+        if re.search(pattern, prompt_lower):
+            return None
+
     has_financial = False
     has_helper = False
     for kw in FINANCIAL_KEYWORDS:

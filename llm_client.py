@@ -5,6 +5,7 @@ Provider is selected via LLM_PROVIDER in config (auto-detected from available AP
 """
 
 import json
+import sys
 import time
 import logging
 import urllib3
@@ -22,7 +23,12 @@ from config import (
 )
 from guardrails import CircuitBreaker
 
-logger = logging.getLogger("llm_client")
+logger = logging.getLogger("uvicorn.error")
+
+
+def _llm_log(tag: str, msg: str):
+    """Log LLM calls through uvicorn's logger for guaranteed terminal visibility."""
+    logger.info(f"[LLM {tag}] {msg}")
 
 
 class LLMClient:
@@ -47,7 +53,7 @@ class LLMClient:
                 f"Set {'SARVAM_API_KEY' if self.provider == 'sarvam' else 'OPENROUTER_API_KEY'} in .env"
             )
 
-        logger.info(f"LLM provider: {self.provider} | models: {self.model_chain}")
+        _llm_log("INIT", f"provider={self.provider}  models={self.model_chain}  base_url={self.base_url}")
 
     # ── single request ──
 
@@ -69,13 +75,18 @@ class LLMClient:
             payload["tools"] = tools
             payload["tool_choice"] = "auto"
 
+        url = f"{self.base_url}/chat/completions"
+        _llm_log("REQ", f"provider={self.provider}  model={model}  url={url}  tools={bool(tools)}")
+        t0 = time.time()
         resp = requests.post(
-            f"{self.base_url}/chat/completions",
+            url,
             headers=headers,
             json=payload,
             timeout=LLM_TIMEOUT_SECONDS,
             verify=False,  # Corporate proxy / self-signed cert workaround
         )
+        elapsed = int((time.time() - t0) * 1000)
+        _llm_log("RES", f"provider={self.provider}  model={model}  status={resp.status_code}  {elapsed}ms")
         resp.raise_for_status()
         return resp.json()
 
@@ -109,12 +120,12 @@ class LLMClient:
 
                 except requests.exceptions.Timeout:
                     last_err = f"Timeout with {model}"
-                    logger.warning(f"Timeout attempt {attempt+1} on {model}")
+                    _llm_log("ERR", f"Timeout attempt {attempt+1} on {model}")
 
                 except requests.exceptions.HTTPError as exc:
                     status = exc.response.status_code if exc.response is not None else 0
                     last_err = f"HTTP {status} from {model}"
-                    logger.warning(last_err)
+                    _llm_log("ERR", f"HTTP {status} from {model} (attempt {attempt+1})")
                     if status == 429:
                         break  # rate-limited → skip retries, try next model immediately
                     if status == 503:
@@ -124,12 +135,13 @@ class LLMClient:
 
                 except Exception as exc:
                     last_err = f"{type(exc).__name__}: {exc}"
-                    logger.warning(f"Error attempt {attempt+1} on {model}: {last_err}")
+                    _llm_log("ERR", f"attempt {attempt+1} on {model}: {last_err}")
 
                 if attempt < max_retries:
                     time.sleep(2 ** attempt)  # exponential backoff: 1s, 2s, 4s...
 
         self.circuit_breaker.record_failure()
+        _llm_log("ERR", f"All models failed. Last error: {last_err}")
         return self._error(f"All models failed. Last error: {last_err}")
 
     @staticmethod
@@ -146,14 +158,17 @@ class LLMClient:
             payload["tools"] = tools
             payload["tool_choice"] = "auto"
 
+        url = f"{self.base_url}/chat/completions"
+        _llm_log("STREAM", f"provider={self.provider}  model={model}  url={url}  tools={bool(tools)}")
         resp = requests.post(
-            f"{self.base_url}/chat/completions",
+            url,
             headers=headers,
             json=payload,
             timeout=LLM_TIMEOUT_SECONDS,
             verify=False,
             stream=True,
         )
+        _llm_log("STREAM_OK", f"provider={self.provider}  model={model}  status={resp.status_code}")
         resp.raise_for_status()
         return resp
 
@@ -231,22 +246,26 @@ class LLMClient:
 
                     # Emit tool calls if any
                     if accumulated_tool_calls:
+                        tc_names = [tc["function"]["name"] for tc in accumulated_tool_calls.values()]
+                        _llm_log("DONE", f"provider={self.provider}  model={model_used}  tool_calls={tc_names}")
                         yield {
                             "type": "tool_calls",
                             "tool_calls": list(accumulated_tool_calls.values()),
                         }
+                    else:
+                        _llm_log("DONE", f"provider={self.provider}  model={model_used}  text_response=True")
 
                     yield {"type": "done", "model": model_used}
                     return  # success
 
                 except requests.exceptions.Timeout:
                     last_err = f"Timeout with {model}"
-                    logger.warning(f"Timeout attempt {attempt+1} on {model}")
+                    _llm_log("ERR", f"Stream timeout attempt {attempt+1} on {model}")
 
                 except requests.exceptions.HTTPError as exc:
                     status = exc.response.status_code if exc.response is not None else 0
                     last_err = f"HTTP {status} from {model}"
-                    logger.warning(last_err)
+                    _llm_log("ERR", f"Stream HTTP {status} from {model} (attempt {attempt+1})")
                     if status == 429:
                         break
                     if status == 503:
@@ -256,10 +275,11 @@ class LLMClient:
 
                 except Exception as exc:
                     last_err = f"{type(exc).__name__}: {exc}"
-                    logger.warning(f"Stream error attempt {attempt+1} on {model}: {last_err}")
+                    _llm_log("ERR", f"Stream attempt {attempt+1} on {model}: {last_err}")
 
                 if attempt < max_retries:
                     time.sleep(2 ** attempt)  # exponential backoff: 1s, 2s, 4s...
 
         self.circuit_breaker.record_failure()
+        _llm_log("ERR", f"All models failed (stream). Last error: {last_err}")
         yield {"type": "error", "message": f"All models failed. Last error: {last_err}"}
