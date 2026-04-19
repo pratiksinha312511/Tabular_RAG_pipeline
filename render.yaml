@@ -10,6 +10,8 @@ services:
     envVars:
       - key: SARVAM_API_KEY
         sync: false  # set manually in dashboard
+      - key: OPENROUTER_API_KEY
+        sync: false  # set manually in dashboard (fallback LLM provider)
       - key: CSV_FILE
         value: transactionsmore.csv
       - key: ENV
