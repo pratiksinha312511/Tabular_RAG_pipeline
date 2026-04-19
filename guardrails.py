@@ -4,7 +4,9 @@ import re
 import time
 import logging
 import hashlib
+import html
 import os
+import unicodedata
 from typing import Optional
 
 from config import (
@@ -15,6 +17,82 @@ from config import (
 )
 
 logger = logging.getLogger("guardrails")
+
+
+# ═════════════════════════════════════════════════════════════════
+#  UNICODE NORMALIZATION
+# ═════════════════════════════════════════════════════════════════
+# Attackers use Unicode homoglyphs (ⅰgnore prevⅰous) and zero-width
+# characters to sneak past regex-based injection detection.
+# NFKC normalization maps these back to their ASCII equivalents
+# so our patterns match correctly.
+# This does NOT change normal English/financial text at all.
+
+# Zero-width and invisible Unicode characters to strip
+_INVISIBLE_CHARS = re.compile(
+    r"[\u200b\u200c\u200d\u200e\u200f"   # zero-width space, joiners, direction marks
+    r"\u00ad"                             # soft hyphen
+    r"\u2060\u2061\u2062\u2063\u2064"     # word joiner, invisible operators
+    r"\ufeff"                             # byte order mark
+    r"\u180e"                             # Mongolian vowel separator
+    r"\u034f"                             # combining grapheme joiner
+    r"]"
+)
+
+
+def normalize_unicode(text: str) -> str:
+    """Normalize Unicode to catch homoglyph and zero-width bypass attacks.
+
+    Steps:
+    1. NFKC normalization maps look-alike characters to ASCII equivalents
+       (e.g. ⅰ → i, ｉ → i, … → ...)
+    2. Strip invisible/zero-width characters that could split words to
+       evade pattern matching
+
+    Normal English text passes through unchanged."""
+    text = unicodedata.normalize("NFKC", text)
+    text = _INVISIBLE_CHARS.sub("", text)
+    return text
+
+
+# ═════════════════════════════════════════════════════════════════
+#  XSS SANITIZATION
+# ═════════════════════════════════════════════════════════════════
+# LLM output is rendered in the browser via innerHTML/markdown.
+# If a prompt-injection attack tricks the LLM into producing
+# <script> or on*= handlers, the browser would execute them.
+# This strips dangerous HTML while preserving safe markdown
+# formatting (bold, bullets, links).
+
+# Tags/patterns to remove from LLM output
+_XSS_PATTERNS = [
+    re.compile(r"<\s*script[^>]*>.*?<\s*/\s*script\s*>", re.IGNORECASE | re.DOTALL),
+    re.compile(r"<\s*script[^>]*/?\s*>", re.IGNORECASE),
+    re.compile(r"<\s*iframe[^>]*>.*?<\s*/\s*iframe\s*>", re.IGNORECASE | re.DOTALL),
+    re.compile(r"<\s*iframe[^>]*/?\s*>", re.IGNORECASE),
+    re.compile(r"<\s*object[^>]*>.*?<\s*/\s*object\s*>", re.IGNORECASE | re.DOTALL),
+    re.compile(r"<\s*embed[^>]*/?\s*>", re.IGNORECASE),
+    re.compile(r"<\s*form[^>]*>.*?<\s*/\s*form\s*>", re.IGNORECASE | re.DOTALL),
+    re.compile(r"<\s*input[^>]*/?\s*>", re.IGNORECASE),
+    re.compile(r"<\s*link[^>]*/?\s*>", re.IGNORECASE),
+    re.compile(r"<\s*meta[^>]*/?\s*>", re.IGNORECASE),
+    re.compile(r"<\s*style[^>]*>.*?<\s*/\s*style\s*>", re.IGNORECASE | re.DOTALL),
+    re.compile(r"<\s*img[^>]*\s+on\w+\s*=[^>]*/?\s*>", re.IGNORECASE),  # <img onerror=...>
+    re.compile(r"\bon\w+\s*=\s*[\"'][^\"']*[\"']", re.IGNORECASE),     # onclick="..." etc.
+    re.compile(r"javascript\s*:", re.IGNORECASE),                       # javascript: URIs
+    re.compile(r"data\s*:\s*text/html", re.IGNORECASE),                  # data:text/html
+]
+
+
+def sanitize_xss(text: str) -> str:
+    """Strip dangerous HTML/JS from LLM output.
+
+    Preserves markdown formatting (**, *, -, •, #, etc.)
+    which the frontend renders safely. Only removes actual
+    HTML tags and event handlers that could execute code."""
+    for pattern in _XSS_PATTERNS:
+        text = pattern.sub("", text)
+    return text
 
 # ═══════════════════════════════════════════════════════════════════
 #  INPUT GUARDRAILS
@@ -201,6 +279,11 @@ def check_cross_user_leakage(
 def run_input_guardrails(prompt: str, user_id: str, all_user_ids: set[str] | None = None) -> dict:
     flags: list[str] = []
 
+    # Normalize Unicode FIRST — before any pattern matching.
+    # This defeats homoglyph attacks (ⅰgnore → ignore) and
+    # zero-width character insertion (ig\u200bnore → ignore).
+    prompt = normalize_unicode(prompt)
+
     injection_msg = check_prompt_injection(prompt)
     if injection_msg:
         return {"blocked": True, "message": injection_msg, "flags": ["prompt_injection"]}
@@ -312,6 +395,10 @@ def check_toxicity(response_text: str) -> list[str]:
 
 def run_output_guardrails(response_text: str, data_summary: dict) -> dict:
     flags: list[str] = []
+
+    # XSS sanitization — strip dangerous HTML/JS before it reaches the browser
+    response_text = sanitize_xss(response_text)
+
     flags.extend(check_hallucination(response_text, data_summary))
     flags.extend(check_confidence(response_text))
     flags.extend(check_toxicity(response_text))

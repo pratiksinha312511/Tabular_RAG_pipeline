@@ -5,19 +5,21 @@ import base64
 import json
 import logging
 import os
+import time
 import traceback
+from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from queue import Queue, Empty
 
 import numpy as np
 import pandas as pd
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from starlette.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 
 from pipeline import TransactionRAGPipeline
 from config import DATA_DIR, OUTPUT_DIR
@@ -73,12 +75,87 @@ app = FastAPI(title="Tabular RAG Pipeline", version="1.0.0")
 # Thread pool for blocking pipeline calls
 _executor = ThreadPoolExecutor(max_workers=2)
 
+# ── Rate Limiter ──
+# Sliding-window rate limiter: per-user and global limits.
+# Normal usage (~1-2 queries/min) is never affected.
+# Only blocks rapid-fire abuse (>10/min per user, >60/min total).
+
+class RateLimiter:
+    """In-memory sliding-window rate limiter."""
+
+    def __init__(self, per_user_limit: int = 10, global_limit: int = 60, window_seconds: int = 60):
+        self.per_user_limit = per_user_limit
+        self.global_limit = global_limit
+        self.window = window_seconds
+        self._user_hits: dict[str, list[float]] = defaultdict(list)
+        self._global_hits: list[float] = []
+
+    def _prune(self, timestamps: list[float], now: float) -> list[float]:
+        cutoff = now - self.window
+        return [t for t in timestamps if t > cutoff]
+
+    def check(self, user_id: str) -> tuple[bool, str]:
+        """Returns (allowed, reason). allowed=True means the request can proceed."""
+        now = time.time()
+
+        # Global limit
+        self._global_hits = self._prune(self._global_hits, now)
+        if len(self._global_hits) >= self.global_limit:
+            return False, "Server is handling too many requests. Please wait a moment."
+
+        # Per-user limit
+        self._user_hits[user_id] = self._prune(self._user_hits[user_id], now)
+        if len(self._user_hits[user_id]) >= self.per_user_limit:
+            return False, "You're sending requests too quickly. Please slow down."
+
+        # Record this hit
+        self._global_hits.append(now)
+        self._user_hits[user_id].append(now)
+        return True, ""
+
+
+_rate_limiter = RateLimiter()
+
+_allowed_origins = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+# In production (Railway), allow the deployed domain
+_railway_url = os.getenv("RAILWAY_PUBLIC_DOMAIN", "")
+if _railway_url:
+    _allowed_origins.append(f"https://{_railway_url}")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=_allowed_origins,
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type", "Authorization"],
 )
+
+
+# ── Security Headers Middleware ──
+# Adds standard security headers to every response to prevent
+# clickjacking, MIME-sniffing, and XSS attacks at the browser level.
+
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; "
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; "
+        "font-src 'self' https://fonts.gstatic.com; "
+        "img-src 'self' data: blob:; "
+        "connect-src 'self';"
+    )
+    return response
 
 # ── Filter noisy VS Code WebSocket probe logs ──
 class _WSProbeFilter(logging.Filter):
@@ -118,8 +195,16 @@ app.mount("/output", StaticFiles(directory=OUTPUT_DIR), name="output")
 
 
 class QueryRequest(BaseModel):
-    user_id: str
-    prompt: str
+    user_id: str = Field(..., min_length=1, max_length=50)
+    prompt: str = Field(..., min_length=1, max_length=2000)
+
+    @field_validator("user_id")
+    @classmethod
+    def validate_user_id(cls, v: str) -> str:
+        import re
+        if not re.match(r"^usr_[a-zA-Z0-9]+$", v.strip()):
+            raise ValueError("Invalid user_id format")
+        return v.strip()
 
 
 class UserInfo(BaseModel):
@@ -152,7 +237,18 @@ async def get_users() -> list[UserInfo]:
 
 @app.post("/api/query")
 async def query(req: QueryRequest):
-    import asyncio
+    # Rate-limit check
+    allowed, reason = _rate_limiter.check(req.user_id)
+    if not allowed:
+        return safe_json_response({
+            "user_name": None,
+            "response": reason,
+            "data_summary": {},
+            "visualizations": [],
+            "cache_hit": False,
+            "latency_ms": 0,
+            "guardrail_flags": ["rate_limited"],
+        }, status_code=429)
 
     try:
         loop = asyncio.get_event_loop()
@@ -209,6 +305,13 @@ async def query(req: QueryRequest):
 @app.post("/api/query/stream")
 async def query_stream(req: QueryRequest):
     """SSE endpoint that streams the LLM response token-by-token."""
+    # Rate-limit check
+    allowed, reason = _rate_limiter.check(req.user_id)
+    if not allowed:
+        async def _rate_limit_sse():
+            event = {"event": "error", "data": {"message": reason}}
+            yield f"event: error\ndata: {json.dumps(event['data'])}\n\n"
+        return StreamingResponse(_rate_limit_sse(), media_type="text/event-stream")
 
     def _encode_charts(items: list) -> list:
         """Convert chart items (path strings or dicts with path+explanation) to base64."""
@@ -252,7 +355,8 @@ async def query_stream(req: QueryRequest):
         except Exception as exc:
             logger.error(f"Stream pipeline error: {exc}")
             traceback.print_exc()
-            q.put({"event": "error", "data": {"message": str(exc)}})
+            # Safe error message — never expose internal details to the client
+            q.put({"event": "error", "data": {"message": "An internal error occurred. Please try again."}})
         finally:
             q.put(None)  # sentinel
 
@@ -299,4 +403,5 @@ async def clear_conversation(req: QueryRequest):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("server:app", host="127.0.0.1", port=8000, reload=True)
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run("server:app", host="0.0.0.0", port=port, reload=os.getenv("ENV", "dev") == "dev")

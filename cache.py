@@ -1,5 +1,6 @@
 """User-specific KV cache layer for the RAG pipeline."""
 
+import time
 from datetime import datetime
 from typing import Any, Optional
 
@@ -7,19 +8,29 @@ import pandas as pd
 
 from config import MAX_QUERY_HISTORY
 
+# Cache TTL and eviction settings
+CACHE_TTL_SECONDS = 1800      # 30 minutes — profiles rebuild on miss (same as first request)
+MAX_CACHED_USERS = 100        # Max unique users in cache before LRU eviction
+
 
 class KVCache:
-    """In-memory KV cache with user-specific namespacing.
+    """In-memory KV cache with user-specific namespacing, TTL, and LRU eviction.
 
     Key patterns
     ------------
     user:{id}:profile        – name, date range, top categories, avg spend
     user:{id}:query_history  – last N (prompt, operation, result_summary)
     user:{id}:viz_state      – last chart type, axes, filters
+    user:{id}:conversation   – multi-turn conversation messages
+
+    TTL: entries expire after CACHE_TTL_SECONDS (30 min).
+    Eviction: when MAX_CACHED_USERS is exceeded, the least-recently-accessed user is evicted.
     """
 
     def __init__(self, max_query_history: int = MAX_QUERY_HISTORY):
         self._store: dict[str, Any] = {}
+        self._timestamps: dict[str, float] = {}   # key → last access time
+        self._user_access: dict[str, float] = {}   # user_id → last access time (for LRU)
         self.max_query_history = max_query_history
 
     # ── generic get / set ──
@@ -27,11 +38,49 @@ class KVCache:
     def _key(self, user_id: str, namespace: str) -> str:
         return f"user:{user_id}:{namespace}"
 
+    def _touch_user(self, user_id: str) -> None:
+        """Update the last-access timestamp for LRU tracking."""
+        self._user_access[user_id] = time.time()
+
+    def _is_expired(self, key: str) -> bool:
+        """Check if a cache entry has exceeded its TTL."""
+        ts = self._timestamps.get(key)
+        if ts is None:
+            return True
+        return (time.time() - ts) > CACHE_TTL_SECONDS
+
+    def _evict_if_needed(self) -> None:
+        """If we exceed MAX_CACHED_USERS, evict the least-recently-used user."""
+        if len(self._user_access) <= MAX_CACHED_USERS:
+            return
+        # Find the user with the oldest access time
+        oldest_uid = min(self._user_access, key=self._user_access.get)
+        self._evict_user(oldest_uid)
+
+    def _evict_user(self, user_id: str) -> None:
+        """Remove all cached data for a specific user."""
+        prefix = f"user:{user_id}:"
+        keys_to_delete = [k for k in self._store if k.startswith(prefix)]
+        for k in keys_to_delete:
+            self._store.pop(k, None)
+            self._timestamps.pop(k, None)
+        self._user_access.pop(user_id, None)
+
     def get(self, user_id: str, namespace: str) -> Optional[Any]:
-        return self._store.get(self._key(user_id, namespace))
+        key = self._key(user_id, namespace)
+        if self._is_expired(key):
+            self._store.pop(key, None)
+            self._timestamps.pop(key, None)
+            return None
+        self._touch_user(user_id)
+        return self._store.get(key)
 
     def set(self, user_id: str, namespace: str, value: Any) -> None:
-        self._store[self._key(user_id, namespace)] = value
+        self._evict_if_needed()
+        key = self._key(user_id, namespace)
+        self._store[key] = value
+        self._timestamps[key] = time.time()
+        self._touch_user(user_id)
 
     # ── profile ──
 
