@@ -16,24 +16,17 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Kaleido needs chromium libs for server-side chart rendering
+# Kaleido needs Chromium for server-side chart rendering
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libglib2.0-0 \
-    libnss3 \
-    libatk1.0-0 \
-    libatk-bridge2.0-0 \
-    libcups2 \
-    libdrm2 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxrandr2 \
-    libgbm1 \
-    libpango-1.0-0 \
-    libcairo2 \
-    libasound2 \
-    libxshmfence1 \
+    chromium \
     fonts-liberation \
     && rm -rf /var/lib/apt/lists/*
+
+# Tell Kaleido / Plotly where Chromium lives
+ENV CHROME_BIN=/usr/bin/chromium
+ENV CHROME_PATH=/usr/bin/chromium
+ENV CHROMIUM_PATH=/usr/bin/chromium
+ENV CHROMIUM_FLAGS="--no-sandbox --disable-gpu --disable-dev-shm-usage"
 
 # Copy installed Python packages from builder
 COPY --from=builder /install /usr/local
