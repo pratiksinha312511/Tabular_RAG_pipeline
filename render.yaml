@@ -1,0 +1,16 @@
+# Render.com Blueprint — Infrastructure as Code
+# Docs: https://docs.render.com/blueprint-spec
+services:
+  - type: web
+    name: vola-finance-rag
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/users
+    envVars:
+      - key: SARVAM_API_KEY
+        sync: false  # set manually in dashboard
+      - key: CSV_FILE
+        value: transactionsmore.csv
+      - key: ENV
+        value: production
