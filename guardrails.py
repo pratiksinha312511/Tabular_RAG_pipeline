@@ -50,10 +50,17 @@ FINANCIAL_KEYWORDS = [
     "cost", "pay", "paid", "bill", "subscription",
     "food", "rent", "housing", "transport", "health",
     "entertainment", "shopping", "insurance", "gym",
-    "how", "what", "when", "where", "show", "give", "tell",
     "compare", "vs", "versus", "between", "last", "this",
     "doing", "financially", "overview", "analysis",
+    # Follow-up / graph / conversational keywords
+    "graph", "visual", "better", "more", "detail", "redo",
+    "improve", "another", "different", "again", "elaborate",
+    "explain", "help", "advice", "recommend", "suggest",
+    "afford", "reduce", "cut", "earn", "received", "credit",
 ]
+
+# These only count if paired with a financial keyword above
+_HELPER_WORDS = {"how", "what", "when", "where", "show", "give", "tell"}
 
 
 def check_prompt_injection(prompt: str) -> Optional[str]:
@@ -70,9 +77,16 @@ def check_prompt_injection(prompt: str) -> Optional[str]:
 
 def check_scope(prompt: str) -> Optional[str]:
     prompt_lower = prompt.lower()
+    has_financial = False
+    has_helper = False
     for kw in FINANCIAL_KEYWORDS:
         if kw in prompt_lower:
-            return None
+            if kw in _HELPER_WORDS:
+                has_helper = True
+            else:
+                has_financial = True
+    if has_financial:
+        return None
     return (
         "That question doesn't seem related to your financial transactions. "
         "I can help you analyze your spending, income, savings trends, "
@@ -86,14 +100,22 @@ def check_length(prompt: str) -> tuple[str, bool]:
     return prompt, False
 
 
-def check_cross_user_leakage(prompt: str, current_user_id: str) -> Optional[str]:
+def check_cross_user_leakage(
+    prompt: str, current_user_id: str, all_user_ids: set[str] | None = None,
+) -> Optional[str]:
     prompt_lower = prompt.lower()
     _LEAKAGE_MSG = (
         "I can only show you your own financial data. "
         "I'm not able to access other users' information for privacy and security reasons."
     )
 
-    # Match both usr_xxx and user_xxx patterns
+    # Check if any OTHER known user ID appears in the prompt
+    if all_user_ids:
+        for uid in all_user_ids:
+            if uid.lower() != current_user_id.lower() and uid.lower() in prompt_lower:
+                return _LEAKAGE_MSG
+
+    # Also catch usr_xxx / user_xxx patterns for IDs not yet in dataset
     for uid in re.findall(r"(?:usr|user)_[a-z0-9]+", prompt_lower):
         normalised = uid if uid.startswith("usr_") else "usr_" + uid[5:]
         if normalised != current_user_id:
@@ -111,14 +133,14 @@ def check_cross_user_leakage(prompt: str, current_user_id: str) -> Optional[str]
     return None
 
 
-def run_input_guardrails(prompt: str, user_id: str) -> dict:
+def run_input_guardrails(prompt: str, user_id: str, all_user_ids: set[str] | None = None) -> dict:
     flags: list[str] = []
 
     injection_msg = check_prompt_injection(prompt)
     if injection_msg:
         return {"blocked": True, "message": injection_msg, "flags": ["prompt_injection"]}
 
-    leakage_msg = check_cross_user_leakage(prompt, user_id)
+    leakage_msg = check_cross_user_leakage(prompt, user_id, all_user_ids)
     if leakage_msg:
         return {"blocked": True, "message": leakage_msg, "flags": ["cross_user_leakage"]}
 
@@ -207,10 +229,27 @@ def check_confidence(response_text: str) -> list[str]:
     return []
 
 
+def check_toxicity(response_text: str) -> list[str]:
+    """Lightweight keyword-based filter for offensive/inappropriate content."""
+    _TOXIC_PATTERNS = [
+        r"\bfuck\b", r"\bshit\b", r"\bass\b", r"\bbitch\b", r"\bdamn\b",
+        r"\bstupid\b", r"\bidiot\b", r"\bdumb\b", r"\bhate\s+you\b",
+        r"\bkill\b", r"\bdie\b", r"\bsuicid", r"\bviolence\b",
+        r"\bracis[tm]\b", r"\bsexis[tm]\b", r"\bslur\b",
+        r"\bnigger\b", r"\bfaggot\b", r"\bretard\b",
+    ]
+    text_lower = response_text.lower()
+    for pat in _TOXIC_PATTERNS:
+        if re.search(pat, text_lower):
+            return ["toxic_content"]
+    return []
+
+
 def run_output_guardrails(response_text: str, data_summary: dict) -> dict:
     flags: list[str] = []
     flags.extend(check_hallucination(response_text, data_summary))
     flags.extend(check_confidence(response_text))
+    flags.extend(check_toxicity(response_text))
     return {"flags": flags, "response": response_text}
 
 

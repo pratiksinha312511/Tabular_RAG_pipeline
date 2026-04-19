@@ -65,11 +65,6 @@
     .text-accent-gradient { background: linear-gradient(135deg, #5E6AD2, #818CF8, #5E6AD2); background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s ease-in-out infinite; }
     @keyframes shimmer { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
 
-    /* Card spotlight */
-    .card-spotlight { position: relative; overflow: hidden; }
-    .card-spotlight::before { content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity 0.3s cubic-bezier(0.16,1,0.3,1); pointer-events: none; z-index: 1; border-radius: inherit; }
-    .card-spotlight:hover::before { opacity: 1; }
-
     /* Typing indicator */
     .typing-dot { animation: typing 1.4s infinite ease-in-out; }
     .typing-dot:nth-child(2) { animation-delay: 0.2s; }
@@ -121,11 +116,30 @@
     .send-btn:active:not(:disabled) { transform: scale(0.96); }
     .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
+    /* Header button */
+    .header-btn { transition: all 0.15s ease; }
+    .header-btn:hover { background: rgba(255,255,255,0.08); }
+    .header-btn:active { transform: scale(0.95); }
+
+    /* Streaming cursor */
+    .streaming-cursor { display: inline-block; width: 2px; height: 1em; background: #5E6AD2; margin-left: 2px; vertical-align: text-bottom; animation: blink 0.8s step-end infinite; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
     /* Reduced motion */
     @media (prefers-reduced-motion: reduce) {
       .blob, .typing-dot { animation: none !important; }
       .msg-enter { animation: none !important; opacity: 1 !important; }
       .text-accent-gradient { animation: none !important; }
+    }
+
+    /* Dark dropdown options to match UI */
+    select#user-select option {
+      background-color: #141619;
+      color: #EDEDEF;
+    }
+    select#user-select option:hover,
+    select#user-select option:checked {
+      background-color: #1E2228;
     }
   </style>
 </head>
@@ -144,7 +158,7 @@
   <div class="relative z-10 min-h-screen flex flex-col">
 
     <!-- Header -->
-    <header class="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-white/[0.06]" style="background: rgba(5,5,6,0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+    <header class="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-white/[0.06]" style="background: rgba(5,5,6,0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
       <div class="flex items-center gap-3">
         <div class="w-8 h-8 rounded-lg bg-accent/20 border border-accent/30 flex items-center justify-center">
           <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
@@ -155,11 +169,23 @@
         </div>
       </div>
 
-      <!-- User selector -->
+      <!-- Center controls -->
+      <div class="flex items-center gap-2">
+        <button id="new-chat-btn" onclick="newChat()" class="header-btn flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/[0.08] text-xs text-[#8A8F98] hover:text-[#EDEDEF]">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          <span class="hidden sm:inline">New Chat</span>
+        </button>
+        <button id="clear-btn" onclick="clearChat()" class="header-btn flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/[0.08] text-xs text-[#8A8F98] hover:text-[#EDEDEF]">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          <span class="hidden sm:inline">Clear</span>
+        </button>
+      </div>
+
+      <!-- Right controls -->
       <div class="flex items-center gap-3">
         <div class="hidden sm:flex items-center gap-2">
           <div id="status-dot" class="w-2 h-2 rounded-full bg-emerald-400 pulse-glow"></div>
-          <span class="text-xs text-[#8A8F98] font-mono">Connected</span>
+          <span id="status-text" class="text-xs text-[#8A8F98] font-mono">Connected</span>
         </div>
         <div class="relative">
           <select id="user-select" class="appearance-none bg-white/[0.05] border border-white/[0.08] rounded-lg px-3 py-2 pr-8 text-sm text-[#EDEDEF] cursor-pointer hover:bg-white/[0.08] focus:outline-none focus:border-accent/50 transition-all duration-200" style="background-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238A8F98' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E&quot;); background-repeat: no-repeat; background-position: right 10px center;">
@@ -181,29 +207,47 @@
             <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"/></svg>
           </div>
           <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-gradient text-center mb-3">Financial Transaction Analyst</h2>
-          <p class="text-sm sm:text-base text-[#8A8F98] text-center max-w-md leading-relaxed mb-8">
+          <p class="text-sm sm:text-base text-[#94A3D6] text-center max-w-md leading-relaxed mb-2">
             Ask questions about your spending, income trends, and financial health. I'll analyze your data and generate visualizations.
           </p>
+          <p id="welcome-user" class="text-xs text-accent/70 font-mono mb-8"></p>
 
           <!-- Suggested queries -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full max-w-lg">
-            <button onclick="sendSuggestion(this)" class="suggestion text-left px-4 py-3 rounded-xl border border-white/[0.06] bg-white/[0.03] text-sm text-[#8A8F98] hover:text-[#EDEDEF]">
+            <button onclick="sendSuggestion('What did I spend the most on last month?')" class="suggestion text-left px-4 py-3 rounded-xl border border-white/[0.06] bg-white/[0.03] text-sm text-[#8A8F98] hover:text-[#EDEDEF]">
               <span class="block text-xs text-accent/70 font-mono mb-1">SPENDING</span>
               What did I spend the most on last month?
             </button>
-            <button onclick="sendSuggestion(this)" class="suggestion text-left px-4 py-3 rounded-xl border border-white/[0.06] bg-white/[0.03] text-sm text-[#8A8F98] hover:text-[#EDEDEF]">
+            <button onclick="sendSuggestion('Show me my spending trend')" class="suggestion text-left px-4 py-3 rounded-xl border border-white/[0.06] bg-white/[0.03] text-sm text-[#8A8F98] hover:text-[#EDEDEF]">
               <span class="block text-xs text-accent/70 font-mono mb-1">TRENDS</span>
               Show me my spending trend
             </button>
-            <button onclick="sendSuggestion(this)" class="suggestion text-left px-4 py-3 rounded-xl border border-white/[0.06] bg-white/[0.03] text-sm text-[#8A8F98] hover:text-[#EDEDEF]">
+            <button onclick="sendSuggestion('Which merchants do I spend the most at?')" class="suggestion text-left px-4 py-3 rounded-xl border border-white/[0.06] bg-white/[0.03] text-sm text-[#8A8F98] hover:text-[#EDEDEF]">
+              <span class="block text-xs text-accent/70 font-mono mb-1">MERCHANTS</span>
+              Which merchants do I spend the most at?
+            </button>
+            <button onclick="sendSuggestion('Compare my income and expenses')" class="suggestion text-left px-4 py-3 rounded-xl border border-white/[0.06] bg-white/[0.03] text-sm text-[#8A8F98] hover:text-[#EDEDEF]">
+              <span class="block text-xs text-accent/70 font-mono mb-1">COMPARISON</span>
+              Compare my income and expenses
+            </button>
+            <button onclick="sendSuggestion('Am I saving money?')" class="suggestion text-left px-4 py-3 rounded-xl border border-white/[0.06] bg-white/[0.03] text-sm text-[#8A8F98] hover:text-[#EDEDEF]">
               <span class="block text-xs text-accent/70 font-mono mb-1">SAVINGS</span>
               Am I saving money?
             </button>
-            <button onclick="sendSuggestion(this)" class="suggestion text-left px-4 py-3 rounded-xl border border-white/[0.06] bg-white/[0.03] text-sm text-[#8A8F98] hover:text-[#EDEDEF]">
+            <button onclick="sendSuggestion('How should I budget next month?')" class="suggestion text-left px-4 py-3 rounded-xl border border-white/[0.06] bg-white/[0.03] text-sm text-[#8A8F98] hover:text-[#EDEDEF]">
+              <span class="block text-xs text-accent/70 font-mono mb-1">BUDGET</span>
+              How should I budget next month?
+            </button>
+            <button onclick="sendSuggestion('Break down my expenses by category')" class="suggestion text-left px-4 py-3 rounded-xl border border-white/[0.06] bg-white/[0.03] text-sm text-[#8A8F98] hover:text-[#EDEDEF]">
+              <span class="block text-xs text-accent/70 font-mono mb-1">CATEGORIES</span>
+              Break down my expenses by category
+            </button>
+            <button onclick="sendSuggestion('Give me a full financial report')" class="suggestion text-left px-4 py-3 rounded-xl border border-white/[0.06] bg-white/[0.03] text-sm text-[#8A8F98] hover:text-[#EDEDEF]">
               <span class="block text-xs text-accent/70 font-mono mb-1">REPORT</span>
               Give me a full financial report
             </button>
           </div>
+          <p class="text-xs text-[#8A8F98]/50 mt-4 text-center">You can ask anything about your financial data — these are just examples</p>
         </div>
       </div>
 
@@ -229,7 +273,7 @@
           </button>
         </form>
         <div class="flex items-center justify-between mt-2 px-1">
-          <p class="text-[10px] text-[#8A8F98]/60 font-mono">Powered by OpenRouter LLM &middot; Guardrail Protected</p>
+          <p class="text-[10px] text-[#8A8F98]/60 font-mono">Powered by OpenRouter LLM &middot; Guardrail Protected &middot; <span id="query-count">0</span> queries this session</p>
           <p id="char-count" class="text-[10px] text-[#8A8F98]/60 font-mono">0 / 500</p>
         </div>
       </div>
@@ -244,7 +288,58 @@
   <script>
     // ── State ──
     let currentUserId = '';
+    let currentUserName = '';
     let isLoading = false;
+    let queryCount = 0;
+    let users = [];
+    let hasMessages = false;
+
+    // Per-user chat history stored in localStorage
+    const chatHistoryStore = {};
+
+    function _storageKey(uid) { return `rag_chat_${uid}`; }
+
+    function saveUserChat(uid) {
+      if (!uid) return;
+      const msgs = [];
+      Array.from(messagesEl.children).forEach(child => {
+        if (child.id === 'welcome') return;
+        msgs.push(child.outerHTML);
+      });
+      try { localStorage.setItem(_storageKey(uid), JSON.stringify(msgs)); } catch {}
+    }
+
+    function loadUserChat(uid) {
+      if (!uid) return;
+      try {
+        const saved = localStorage.getItem(_storageKey(uid));
+        if (saved) {
+          const msgs = JSON.parse(saved);
+          if (msgs.length > 0) {
+            // Clear current non-welcome messages
+            Array.from(messagesEl.children).forEach(child => {
+              if (child.id !== 'welcome') child.remove();
+            });
+            welcomeEl.style.display = 'none';
+            hasMessages = true;
+            msgs.forEach(html => {
+              const wrapper = document.createElement('div');
+              wrapper.innerHTML = html;
+              const node = wrapper.firstElementChild;
+              if (node) messagesEl.appendChild(node);
+            });
+            scrollToBottom();
+            return;
+          }
+        }
+      } catch {}
+      // No saved chat — show welcome
+      Array.from(messagesEl.children).forEach(child => {
+        if (child.id !== 'welcome') child.remove();
+      });
+      welcomeEl.style.display = '';
+      hasMessages = false;
+    }
 
     const messagesEl = document.getElementById('messages');
     const welcomeEl = document.getElementById('welcome');
@@ -253,24 +348,54 @@
     const userSelect = document.getElementById('user-select');
     const chatForm = document.getElementById('chat-form');
     const charCount = document.getElementById('char-count');
+    const queryCountEl = document.getElementById('query-count');
+    const welcomeUser = document.getElementById('welcome-user');
 
     // ── Load users ──
     async function loadUsers() {
       try {
         const resp = await fetch('/api/users');
-        const users = await resp.json();
+        users = await resp.json();
         userSelect.innerHTML = users.map((u, i) =>
           `<option value="${u.user_id}" ${i === 0 ? 'selected' : ''}>${u.user_name} (${u.transaction_count} txns)</option>`
         ).join('');
         currentUserId = users[0]?.user_id || '';
+        currentUserName = users[0]?.user_name || '';
+        welcomeUser.textContent = currentUserName ? `Analyzing data for ${currentUserName}` : '';
+        setStatus('connected');
       } catch {
         userSelect.innerHTML = '<option value="">Connection error</option>';
+        setStatus('error');
       }
     }
 
     userSelect.addEventListener('change', (e) => {
+      // Save current user's chat before switching
+      if (currentUserId) saveUserChat(currentUserId);
+
       currentUserId = e.target.value;
+      const user = users.find(u => u.user_id === e.target.value);
+      currentUserName = user?.user_name || '';
+      welcomeUser.textContent = currentUserName ? `Analyzing data for ${currentUserName}` : '';
+
+      // Restore the new user's chat (or show welcome)
+      loadUserChat(currentUserId);
     });
+
+    function setStatus(state) {
+      const dot = document.getElementById('status-dot');
+      const text = document.getElementById('status-text');
+      if (state === 'connected') {
+        dot.className = 'w-2 h-2 rounded-full bg-emerald-400 pulse-glow';
+        text.textContent = 'Connected'; text.style.color = '';
+      } else if (state === 'loading') {
+        dot.className = 'w-2 h-2 rounded-full bg-amber-400 pulse-glow';
+        text.textContent = 'Processing...'; text.style.color = '#FBBF24';
+      } else if (state === 'error') {
+        dot.className = 'w-2 h-2 rounded-full bg-red-400';
+        text.textContent = 'Error'; text.style.color = '#F87171';
+      }
+    }
 
     // ── Auto-resize textarea ──
     promptInput.addEventListener('input', () => {
@@ -295,44 +420,205 @@
       }
     });
 
-    function sendSuggestion(btn) {
-      const text = btn.textContent.replace(/^[A-Z]+\n/, '').trim();
-      const lines = text.split('\n');
-      promptInput.value = lines[lines.length - 1].trim();
+    function sendSuggestion(text) {
+      if (isLoading) return;
+      promptInput.value = text;
       chatForm.dispatchEvent(new Event('submit'));
     }
 
+    function newChat() {
+      clearChat();
+      // Clear server-side conversation history
+      if (currentUserId) {
+        fetch('/api/conversation/clear', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: currentUserId, prompt: '' }),
+        }).catch(() => {});
+        // Also clear saved chat for this user
+        try { localStorage.removeItem(_storageKey(currentUserId)); } catch {}
+      }
+      promptInput.focus();
+    }
+
+    function clearChat() {
+      Array.from(messagesEl.children).forEach(child => {
+        if (child.id !== 'welcome') child.remove();
+      });
+      welcomeEl.style.display = '';
+      hasMessages = false;
+      if (currentUserId) {
+        try { localStorage.removeItem(_storageKey(currentUserId)); } catch {}
+      }
+    }
+
+    // ── Send query (streaming via SSE) ──
     async function sendQuery(prompt) {
       isLoading = true;
       sendBtn.disabled = true;
+      hasMessages = true;
       welcomeEl.style.display = 'none';
+      setStatus('loading');
 
-      // Add user message
       addMessage('user', prompt);
       promptInput.value = '';
       promptInput.style.height = 'auto';
       charCount.textContent = '0 / 500';
 
-      // Add loading indicator
-      const loadingId = addLoadingMessage();
+      // Create the assistant message container for streaming
+      const { container, textEl, badgesEl, chartsEl } = createStreamingMessage();
+
+      let fullText = '';
+      let metaData = {};
+      let doneData = {};
+      let chartsData = [];
+      let gotChunk = false;
 
       try {
-        const resp = await fetch('/api/query', {
+        const resp = await fetch('/api/query/stream', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ user_id: currentUserId, prompt }),
         });
-        const data = await resp.json();
-        removeLoadingMessage(loadingId);
-        addAssistantMessage(data);
+
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+        const reader = resp.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let currentEvent = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+          for (const line of lines) {
+            if (line.startsWith('event: ')) {
+              currentEvent = line.slice(7).trim();
+            } else if (line.startsWith('data: ')) {
+              const dataStr = line.slice(6);
+              let data;
+              try { data = JSON.parse(dataStr); } catch { continue; }
+
+              if (currentEvent === 'meta') {
+                metaData = data;
+              } else if (currentEvent === 'chunk') {
+                gotChunk = true;
+                fullText += data.text;
+                // Render progressively
+                textEl.innerHTML = formatResponse(fullText) + '<span class="streaming-cursor"></span>';
+                scrollToBottom();
+              } else if (currentEvent === 'charts') {
+                chartsData = data.visualizations || [];
+              } else if (currentEvent === 'blocked') {
+                // Guardrail blocked — show as a complete message
+                fullText = data.response || 'Request blocked.';
+                doneData = { guardrail_flags: data.guardrail_flags || [], latency_ms: 0 };
+              } else if (currentEvent === 'done') {
+                doneData = data;
+              } else if (currentEvent === 'error') {
+                fullText = data.message || 'An error occurred.';
+                doneData = { guardrail_flags: ['server_error'], latency_ms: 0 };
+              }
+              currentEvent = '';
+            }
+          }
+        }
+
+        // ── Finalize the message ──
+
+        // Remove streaming cursor
+        textEl.innerHTML = formatResponse(fullText);
+
+        // Add charts with explanations
+        if (chartsData.length) {
+          chartsEl.innerHTML = chartsData.map(v => {
+            const explanation = v.explanation
+              ? `<p class="text-xs leading-relaxed text-[#9A9FA8] mt-2 px-1 border-l-2 border-accent/30 pl-3">${escapeHtml(v.explanation)}</p>`
+              : '';
+            return `<div class="chart-block mb-4">
+              <img src="${v.base64}" alt="${v.filename}" class="chart-img w-full max-w-md rounded-lg cursor-pointer hover:opacity-90 transition-opacity" onclick="openLightbox(this.src)" loading="lazy" />
+              ${explanation}
+            </div>`;
+          }).join('');
+        }
+
+        // Add badges — only show latency and security blocks (no debug info)
+        const badges = [];
+        if (doneData.latency_ms != null) badges.push(`<span class="badge bg-white/[0.04] text-[#8A8F98] border border-white/[0.08]">${doneData.latency_ms}ms</span>`);
+        if (doneData.guardrail_flags?.length) {
+          doneData.guardrail_flags.forEach(f => {
+            const isBlock = ['prompt_injection', 'cross_user_leakage', 'invalid_user_id', 'off_topic'].includes(f);
+            if (isBlock) {
+              badges.push(`<span class="badge bg-red-500/10 text-red-400 border-red-500/20 border">&#128737; ${f.replace(/_/g, ' ')}</span>`);
+            }
+          });
+        }
+        badgesEl.innerHTML = badges.join('');
+
+        // Add follow-up suggestions
+        addFollowUpSuggestions(prompt, chartsData.length > 0);
+
+        queryCount++;
+        queryCountEl.textContent = queryCount;
+        setStatus('connected');
+
+        // Persist chat for this user
+        saveUserChat(currentUserId);
+
       } catch (err) {
-        removeLoadingMessage(loadingId);
-        addMessage('error', 'Failed to reach the server. Make sure the backend is running.');
+        // Remove streaming container and show error
+        container.remove();
+        let msg;
+        if (err.name === 'AbortError') {
+          msg = 'Request timed out. Please try a simpler query or try again.';
+        } else if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+          msg = 'Cannot reach the server. Make sure the backend is running on port 8000.';
+        } else {
+          msg = `Something went wrong: ${err.message}. Please try again.`;
+        }
+        addMessage('error', msg);
+        setStatus('error');
+        setTimeout(() => { if (!isLoading) setStatus('connected'); }, 3000);
       }
 
       isLoading = false;
       sendBtn.disabled = false;
       promptInput.focus();
+    }
+
+    function createStreamingMessage() {
+      const div = document.createElement('div');
+      div.className = 'msg-enter';
+      div.innerHTML = `
+        <div class="flex justify-start items-start gap-2">
+          <div class="w-6 h-6 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg class="w-3 h-3 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0"/></svg>
+          </div>
+          <div class="max-w-[90%] sm:max-w-[80%]">
+            <div class="px-4 sm:px-5 py-4 rounded-2xl rounded-bl-md"
+                 style="background: linear-gradient(to bottom, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); border: 1px solid rgba(255,255,255,0.06); box-shadow: 0 2px 20px rgba(0,0,0,0.3);">
+              <div class="response-text text-sm leading-relaxed text-[#C4C4C8]" data-role="stream-text">
+                <span class="streaming-cursor"></span>
+              </div>
+              <div class="mt-3 space-y-3" data-role="stream-charts"></div>
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5 mt-2 ml-1" data-role="stream-badges"></div>
+          </div>
+        </div>`;
+
+      messagesEl.appendChild(div);
+      scrollToBottom();
+
+      return {
+        container: div,
+        textEl: div.querySelector('[data-role="stream-text"]'),
+        chartsEl: div.querySelector('[data-role="stream-charts"]'),
+        badgesEl: div.querySelector('[data-role="stream-badges"]'),
+      };
     }
 
     // ── Message rendering ──
@@ -343,18 +629,29 @@
 
       if (type === 'user') {
         div.innerHTML = `
-          <div class="flex justify-end">
-            <div class="max-w-[85%] sm:max-w-[70%] px-4 py-3 rounded-2xl rounded-br-md text-sm leading-relaxed"
-                 style="background: rgba(94,106,210,0.15); border: 1px solid rgba(94,106,210,0.2);">
-              ${escapeHtml(text)}
+          <div class="flex justify-end items-start gap-2">
+            <div class="max-w-[85%] sm:max-w-[70%]">
+              <div class="px-4 py-3 rounded-2xl rounded-br-md text-sm leading-relaxed"
+                   style="background: rgba(94,106,210,0.15); border: 1px solid rgba(94,106,210,0.2);">
+                ${escapeHtml(text)}
+              </div>
+              <div class="text-right mt-1 mr-1">
+                <span class="text-[10px] text-[#8A8F98]/50 font-mono">${escapeHtml(currentUserName || 'You')}</span>
+              </div>
             </div>
           </div>`;
       } else if (type === 'error') {
         div.innerHTML = `
-          <div class="flex justify-start">
+          <div class="flex justify-start items-start gap-2">
+            <div class="w-6 h-6 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <svg class="w-3 h-3 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+            </div>
             <div class="max-w-[85%] sm:max-w-[70%] px-4 py-3 rounded-2xl rounded-bl-md text-sm leading-relaxed"
-                 style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: #FCA5A5;">
+                 style="background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.15); color: #FCA5A5;">
               ${escapeHtml(text)}
+              <div class="mt-2 pt-2 border-t border-red-500/10">
+                <button onclick="retryLast()" class="text-xs text-red-300/70 hover:text-red-300 underline underline-offset-2">Retry last query</button>
+              </div>
             </div>
           </div>`;
       }
@@ -363,13 +660,29 @@
       scrollToBottom();
     }
 
+    function retryLast() {
+      const userMsgs = messagesEl.querySelectorAll('.msg-enter');
+      for (let i = userMsgs.length - 1; i >= 0; i--) {
+        const el = userMsgs[i];
+        const userBubble = el.querySelector('[style*="rgba(94,106,210"]');
+        if (userBubble) {
+          promptInput.value = userBubble.textContent.trim();
+          chatForm.dispatchEvent(new Event('submit'));
+          return;
+        }
+      }
+    }
+
     function addLoadingMessage() {
       const id = 'loading-' + Date.now();
       const div = document.createElement('div');
       div.id = id;
       div.className = 'msg-enter';
       div.innerHTML = `
-        <div class="flex justify-start">
+        <div class="flex justify-start items-start gap-2">
+          <div class="w-6 h-6 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg class="w-3 h-3 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0"/></svg>
+          </div>
           <div class="flex items-center gap-2 px-4 py-3 rounded-2xl rounded-bl-md"
                style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);">
             <div class="flex gap-1">
@@ -394,30 +707,46 @@
       const div = document.createElement('div');
       div.className = 'msg-enter';
 
-      // Metadata badges
       const badges = [];
-      if (data.cache_hit) badges.push(`<span class="badge bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">⚡ Cache Hit</span>`);
       badges.push(`<span class="badge bg-white/[0.04] text-[#8A8F98] border border-white/[0.08]">${data.latency_ms}ms</span>`);
       if (data.guardrail_flags?.length) {
         data.guardrail_flags.forEach(f => {
-          const isBlock = ['prompt_injection', 'cross_user_leakage', 'invalid_user_id'].includes(f);
-          badges.push(`<span class="badge ${isBlock ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'} border">${isBlock ? '🛡️' : '⚠️'} ${f.replace(/_/g, ' ')}</span>`);
+          const isBlock = ['prompt_injection', 'cross_user_leakage', 'invalid_user_id', 'off_topic'].includes(f);
+          if (isBlock) {
+            badges.push(`<span class="badge bg-red-500/10 text-red-400 border-red-500/20 border">&#128737; ${f.replace(/_/g, ' ')}</span>`);
+          }
         });
       }
 
-      // Charts
       let chartsHtml = '';
       if (data.visualizations?.length) {
         chartsHtml = `<div class="mt-3 space-y-3">` +
-          data.visualizations.map(v =>
-            `<img src="${v.base64}" alt="${v.filename}" class="chart-img w-full max-w-md" onclick="openLightbox('${v.base64}')" />`
-          ).join('') + `</div>`;
+          data.visualizations.map(v => {
+            const explanation = v.explanation
+              ? `<p class="text-xs leading-relaxed text-[#9A9FA8] mt-2 px-1 border-l-2 border-accent/30 pl-3">${escapeHtml(v.explanation)}</p>`
+              : '';
+            return `<div class="chart-block mb-4">
+              <img src="${v.base64}" alt="${v.filename}" class="chart-img w-full max-w-md rounded-lg cursor-pointer hover:opacity-90 transition-opacity" onclick="openLightbox(this.src)" loading="lazy" />
+              ${explanation}
+            </div>`;
+          }).join('') + `</div>`;
       }
 
+      const isBlocked = data.guardrail_flags?.some(f =>
+        ['prompt_injection', 'cross_user_leakage', 'invalid_user_id', 'off_topic'].includes(f)
+      );
+      const avatarBg = isBlocked ? 'bg-red-500/10 border-red-500/20' : 'bg-accent/10 border-accent/20';
+      const avatarColor = isBlocked ? 'text-red-400' : 'text-accent';
+
       div.innerHTML = `
-        <div class="flex justify-start">
+        <div class="flex justify-start items-start gap-2">
+          <div class="w-6 h-6 rounded-lg ${avatarBg} border flex items-center justify-center flex-shrink-0 mt-0.5">
+            ${isBlocked
+              ? `<svg class="w-3 h-3 ${avatarColor}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>`
+              : `<svg class="w-3 h-3 ${avatarColor}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0"/></svg>`
+            }
+          </div>
           <div class="max-w-[90%] sm:max-w-[80%]">
-            <!-- Response card -->
             <div class="px-4 sm:px-5 py-4 rounded-2xl rounded-bl-md"
                  style="background: linear-gradient(to bottom, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); border: 1px solid rgba(255,255,255,0.06); box-shadow: 0 2px 20px rgba(0,0,0,0.3);">
               <div class="response-text text-sm leading-relaxed text-[#C4C4C8]">
@@ -425,7 +754,6 @@
               </div>
               ${chartsHtml}
             </div>
-            <!-- Metadata -->
             <div class="flex flex-wrap items-center gap-1.5 mt-2 ml-1">
               ${badges.join('')}
             </div>
@@ -446,24 +774,18 @@
 
     function formatResponse(text) {
       if (!text) return '<span class="text-[#8A8F98]">No response generated.</span>';
-      // Basic markdown-like formatting
       let html = escapeHtml(text);
-      // Bold
       html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-      // Inline code
       html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-      // Bullet points
       html = html.replace(/^[\s]*[•\-–]\s*(.+)$/gm, '<li>$1</li>');
       html = html.replace(/(<li>.*<\/li>\n?)+/g, '<ul class="list-disc list-inside">$&</ul>');
-      // Table rows (basic markdown table)
       if (html.includes('|')) {
         const lines = html.split('\n');
-        let inTable = false;
-        let tableHtml = '';
+        let inTable = false, tableHtml = '';
         const out = [];
         for (const line of lines) {
           if (line.trim().startsWith('|') && line.trim().endsWith('|')) {
-            if (line.includes('---')) continue; // separator
+            if (line.includes('---')) continue;
             const cells = line.split('|').filter(c => c.trim()).map(c => c.trim());
             if (!inTable) {
               tableHtml = '<table><thead><tr>' + cells.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>';
@@ -479,16 +801,13 @@
         if (inTable) { tableHtml += '</tbody></table>'; out.push(tableHtml); }
         html = out.join('\n');
       }
-      // Paragraphs
       html = html.replace(/\n\n+/g, '</p><p>');
       html = html.replace(/\n/g, '<br>');
       return '<p>' + html + '</p>';
     }
 
     function scrollToBottom() {
-      requestAnimationFrame(() => {
-        messagesEl.scrollTop = messagesEl.scrollHeight;
-      });
+      requestAnimationFrame(() => { messagesEl.scrollTop = messagesEl.scrollHeight; });
     }
 
     function openLightbox(src) {
@@ -503,6 +822,54 @@
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closeLightbox();
     });
+
+    function addFollowUpSuggestions(lastPrompt, hadCharts) {
+      // Remove any existing follow-up suggestions
+      document.querySelectorAll('.follow-up-suggestions').forEach(el => el.remove());
+
+      const lower = lastPrompt.toLowerCase();
+      const suggestions = [];
+
+      // Context-aware follow-ups based on what was just asked
+      if (hadCharts) {
+        suggestions.push('Can you make a better graph?');
+      }
+      if (lower.includes('spend') || lower.includes('category') || lower.includes('breakdown')) {
+        suggestions.push('Show me the trend over time');
+        suggestions.push('Which merchants cost the most?');
+      } else if (lower.includes('trend') || lower.includes('monthly')) {
+        suggestions.push('Break down by category');
+        suggestions.push('Am I saving money?');
+      } else if (lower.includes('saving') || lower.includes('income')) {
+        suggestions.push('How should I budget next month?');
+        suggestions.push('Show my spending breakdown');
+      } else if (lower.includes('merchant') || lower.includes('store')) {
+        suggestions.push('Show spending trend');
+        suggestions.push('What are my top categories?');
+      } else if (lower.includes('budget') || lower.includes('recommend')) {
+        suggestions.push('Compare income vs expenses');
+        suggestions.push('Show my spending trend');
+      } else if (lower.includes('report') || lower.includes('overview')) {
+        suggestions.push('Show me a detailed trend');
+        suggestions.push('How should I budget?');
+      } else {
+        suggestions.push('Tell me more');
+        suggestions.push('Show me a chart');
+      }
+
+      // Always add a generic option
+      if (suggestions.length < 3) {
+        suggestions.push('Give me a full report');
+      }
+
+      const div = document.createElement('div');
+      div.className = 'follow-up-suggestions msg-enter flex flex-wrap gap-2 ml-8 mt-1 mb-2';
+      div.innerHTML = suggestions.map(s =>
+        `<button onclick="sendSuggestion('${s.replace(/'/g, "\\'")}')" class="suggestion text-xs px-3 py-1.5 rounded-lg border border-white/[0.06] bg-white/[0.03] text-[#8A8F98] hover:text-[#EDEDEF] transition-all">${s}</button>`
+      ).join('');
+      messagesEl.appendChild(div);
+      scrollToBottom();
+    }
 
     // ── Init ──
     loadUsers();

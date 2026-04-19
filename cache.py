@@ -117,3 +117,22 @@ class KVCache:
             "filters": filters,
             "updated_at": datetime.now().isoformat(),
         })
+
+    # ── conversation history (full messages for multi-turn) ──
+
+    def get_conversation(self, user_id: str) -> list[dict]:
+        """Return the recent conversation messages [{role, content}, ...]."""
+        return self.get(user_id, "conversation") or []
+
+    def add_conversation_turn(self, user_id: str, role: str, content: str, max_turns: int = 10) -> None:
+        """Append a message to the conversation history, keeping last N turns."""
+        conv = self.get_conversation(user_id)
+        conv.append({"role": role, "content": content})
+        # Keep last max_turns pairs (user+assistant = 2 messages each)
+        max_messages = max_turns * 2
+        if len(conv) > max_messages:
+            conv = conv[-max_messages:]
+        self.set(user_id, "conversation", conv)
+
+    def clear_conversation(self, user_id: str) -> None:
+        self.set(user_id, "conversation", [])
