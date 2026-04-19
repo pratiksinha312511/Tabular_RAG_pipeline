@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vola AI — Smart Financial Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --deep: #0a0118;
+            --base: #0d021f;
+            --elevated: #140330;
+            --surface: #1a0640;
+            --accent: #7C3AED;
+            --accent-bright: #8B5CF6;
+            --teal: #00D4AA;
+            --teal-dim: #00B894;
+            --text: #EDEDEF;
+            --text-muted: #9CA3AF;
+            --border: rgba(139, 92, 246, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--base);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ── Background effects ── */
+        .bg-glow {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .bg-glow::before {
+            content: '';
+            position: absolute;
+            width: 800px; height: 800px;
+            top: -200px; left: 50%;
+            transform: translateX(-50%);
+            background: radial-gradient(ellipse, rgba(124,58,237,0.15), transparent 70%);
+        }
+        .bg-glow::after {
+            content: '';
+            position: absolute;
+            width: 600px; height: 600px;
+            top: 300px; right: -100px;
+            background: radial-gradient(ellipse, rgba(0,212,170,0.08), transparent 70%);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── Navigation ── */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            background: rgba(13, 2, 31, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 0;
+        }
+        nav .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--text);
+            text-decoration: none;
+        }
+        .nav-logo .logo-icon {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, var(--accent), var(--teal));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            list-style: none;
+        }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--teal); }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+        }
+
+        /* ── Sections ── */
+        section {
+            padding: 100px 0;
+        }
+        .section-label {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--teal);
+            margin-bottom: 12px;
+            font-family: 'Inter', monospace;
+        }
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 20px;
+        }
+        .section-title .highlight {
+            background: linear-gradient(135deg, var(--accent-bright), var(--teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            line-height: 1.8;
+        }
+
+        /* ── Hero ── */
+        .hero {
+            padding-top: 160px;
+            padding-bottom: 80px;
+            text-align: center;
+        }
+        .hero .section-title {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            max-width: 800px;
+            margin: 0 auto 24px;
+        }
+        .hero .section-subtitle {
+            max-width: 650px;
+            margin: 0 auto 40px;
+        }
+        .hero-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: var(--elevated);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+        }
+        .badge-accent { border-color: rgba(124,58,237,0.4); color: var(--accent-bright); }
+        .badge-teal { border-color: rgba(0,212,170,0.4); color: var(--teal); }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, var(--accent), #6D28D9);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 24px rgba(124,58,237,0.3);
+        }
+        .hero-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(124,58,237,0.4);
+        }
+
+        /* ── Cards grid ── */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+        .card {
+            background: var(--elevated);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            transition: border-color 0.3s, transform 0.2s;
+        }
+        .card:hover {
+            border-color: rgba(124,58,237,0.4);
+            transform: translateY(-2px);
+        }
+        .card-icon {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 16px;
+            background: rgba(124,58,237,0.15);
+        }
+        .card-icon.teal { background: rgba(0,212,170,0.15); }
+        .card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .card p {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* ── Pipeline flow ── */
+        .pipeline-flow {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            margin-top: 48px;
+            position: relative;
+        }
+        @media (max-width: 768px) {
+            .pipeline-flow { grid-template-columns: 1fr; }
+        }
+        .pipeline-step {
+            text-align: center;
+            padding: 24px 16px;
+            position: relative;
+        }
+        .pipeline-step::after {
+            content: '→';
+            position: absolute;
+            right: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .pipeline-step:last-child::after { display: none; }
+        @media (max-width: 768px) {
+            .pipeline-step::after {
+                content: '↓';
+                right: 50%;
+                top: auto;
+                bottom: -12px;
+                transform: translateX(50%);
+            }
+        }
+        .step-number {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--teal));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin: 0 auto 12px;
+        }
+        .step-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+        }
+        .step-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ── Stats bar ── */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 60px;
+            padding: 40px;
+            background: var(--elevated);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-bright), var(--teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* ── Chart showcase ── */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 40px;
+        }
+        .chart-item {
+            background: var(--elevated);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+        .chart-item:hover { border-color: rgba(0,212,170,0.4); }
+        .chart-icon { font-size: 2rem; margin-bottom: 10px; }
+        .chart-name {
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+        }
+        .chart-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* ── Guardrails ── */
+        .guardrail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 40px;
+        }
+        .guardrail-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 20px;
+            background: var(--elevated);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        .guardrail-icon {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+            background: rgba(0,212,170,0.12);
+        }
+        .guardrail-item h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; }
+        .guardrail-item p { font-size: 0.78rem; color: var(--text-muted); line-height: 1.6; }
+
+        /* ── Tech stack ── */
+        .tech-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 32px;
+        }
+        .tech-tag {
+            padding: 10px 20px;
+            background: var(--elevated);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .tech-tag .dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+        }
+        .dot-purple { background: var(--accent); }
+        .dot-teal { background: var(--teal); }
+        .dot-blue { background: #3B82F6; }
+        .dot-yellow { background: #F59E0B; }
+        .dot-green { background: #10B981; }
+        .dot-red { background: #EF4444; }
+
+        /* ── Code block ── */
+        .code-block {
+            background: var(--deep);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 32px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.82rem;
+            line-height: 1.8;
+            color: var(--text-muted);
+        }
+        .code-block .comment { color: #6B7280; }
+        .code-block .keyword { color: var(--accent-bright); }
+        .code-block .string { color: var(--teal); }
+        .code-block .var { color: #F59E0B; }
+
+        /* ── Env table ── */
+        .env-table {
+            width: 100%;
+            margin-top: 32px;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: var(--elevated);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .env-table th {
+            text-align: left;
+            padding: 14px 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+        .env-table td {
+            padding: 14px 20px;
+            font-size: 0.85rem;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .env-table tr:last-child td { border-bottom: none; }
+        .env-table code {
+            background: rgba(124,58,237,0.12);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: var(--accent-bright);
+        }
+
+        /* ── Footer ── */
+        footer {
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+        footer p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        footer a { color: var(--teal); text-decoration: none; }
+
+        /* ── Divider ── */
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="#" class="nav-logo">
+                <span class="logo-icon">V</span>
+                Vola AI
+            </a>
+            <ul class="nav-links">
+                <li><a href="#pipeline">Pipeline</a></li>
+                <li><a href="#charts">Charts</a></li>
+                <li><a href="#guardrails">Guardrails</a></li>
+                <li><a href="#tech">Tech Stack</a></li>
+                <li><a href="#setup">Setup</a></li>
+                <li><a href="https://github.com/pratiksinha312511/Tabular_RAG_pipeline" target="_blank">GitHub ↗</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badges">
+                <span class="badge badge-accent">🤖 RAG Pipeline</span>
+                <span class="badge badge-teal">📊 12 Chart Types</span>
+                <span class="badge">🛡️ 12 Guardrails</span>
+                <span class="badge badge-accent">💬 Proactive AI</span>
+            </div>
+            <h1 class="section-title">
+                Your smart financial assistant<br>
+                powered by <span class="highlight">Tabular RAG</span>
+            </h1>
+            <p class="section-subtitle">
+                Ask about spending, savings, budgets, and more — Vola AI analyzes your transactions,
+                generates charts, and helps you take control of your finances. Built with a 4-stage
+                RAG pipeline, 12 guardrails, and 31 intent handlers.
+            </p>
+            <a href="https://github.com/pratiksinha312511/Tabular_RAG_pipeline" class="hero-cta" target="_blank">
+                View on GitHub →
+            </a>
+
+            <!-- Stats -->
+            <div class="stats-bar">
+                <div class="stat">
+                    <div class="stat-value">4</div>
+                    <div class="stat-label">Pipeline Stages</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">31</div>
+                    <div class="stat-label">Intent Handlers</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Chart Types</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Guardrails</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">27</div>
+                    <div class="stat-label">Categories</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">8</div>
+                    <div class="stat-label">LLM Models</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 01 — Pipeline Flow -->
+    <section id="pipeline">
+        <div class="container">
+            <span class="section-label">01 — Pipeline</span>
+            <h2 class="section-title">
+                4 stages from question<br>to <span class="highlight">insight</span>
+            </h2>
+            <p class="section-subtitle">
+                Every query flows through a deterministic 4-stage pipeline. Input guardrails run first,
+                then context is assembled with the user's financial profile, the LLM reasons over it,
+                and output guardrails verify the response before delivery.
+            </p>
+
+            <div class="pipeline-flow">
+                <div class="pipeline-step">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Input & Validation</div>
+                    <div class="step-desc">Unicode normalization, injection detection, scope check, cross-user leakage prevention, follow-up resolution</div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Context Assembly</div>
+                    <div class="step-desc">User profile from cache, conversation history (6-msg window), query history, system prompt with financial data</div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-number">3</div>
+                    <div class="step-title">LLM + Tool Dispatch</div>
+                    <div class="step-desc">31 intent handlers, LLM reasoning with 12 tool schemas, chart generation via Plotly, smart fallback chain</div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Response & Guard</div>
+                    <div class="step-desc">XSS sanitization, hallucination grounding, toxicity filter, cache update, audit logging</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 02 — Features -->
+    <section id="features">
+        <div class="container">
+            <span class="section-label">02 — Features</span>
+            <h2 class="section-title">
+                More than a chatbot.<br><span class="highlight">Financial intelligence.</span>
+            </h2>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-icon">💬</div>
+                    <h3>Proactive Conversations</h3>
+                    <p>Every response ends with a contextual follow-up question. Reply with yes/no, a number, or just a topic word like "groceries" — the AI understands and continues.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon teal">📊</div>
+                    <h3>12 Chart Types</h3>
+                    <p>Donut breakdowns, trend lines, heatmaps, scatter plots, cumulative flow, merchant deep-dives — all rendered server-side with Plotly in a premium dark theme.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">💰</div>
+                    <h3>Smart Budget Planning</h3>
+                    <p>Prescriptive budget tables with the 50/30/20 rule. Multi-month plans (quarter, 6 months) with progressive reduction targets and projected savings.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon teal">🔄</div>
+                    <h3>Subscription Detection</h3>
+                    <p>Automatically identifies recurring charges from transaction patterns. Classifies subscriptions vs bills, calculates total monthly outflow, suggests cancellation targets.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🕐</div>
+                    <h3>Dynamic Time Periods</h3>
+                    <p>"Last 3 months", "since January", "this quarter" — the pipeline parses natural language time references and filters data accordingly.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon teal">🧠</div>
+                    <h3>Multi-Turn Memory</h3>
+                    <p>6-message sliding window conversation history. The AI remembers what you asked, what charts it showed, and builds on previous context.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📝</div>
+                    <h3>Comprehensive Reports</h3>
+                    <p>Request a "full financial report" and get a multi-section analysis with 8+ charts covering spending, income, savings, trends, and merchant breakdowns.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon teal">🔀</div>
+                    <h3>LLM Fallback Chain</h3>
+                    <p>8 models across 2 providers (Sarvam AI + OpenRouter). If one model fails, the next picks up seamlessly — zero downtime for the user.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 03 — Charts -->
+    <section id="charts">
+        <div class="container">
+            <span class="section-label">03 — Visualizations</span>
+            <h2 class="section-title">
+                12 chart types, <span class="highlight">one dark theme</span>
+            </h2>
+            <p class="section-subtitle">
+                All charts are rendered server-side with Plotly + Kaleido. Premium dark theme
+                inspired by Linear. Exported as high-DPI PNG (1100×650, 2× scale).
+            </p>
+
+            <div class="chart-grid">
+                <div class="chart-item">
+                    <div class="chart-icon">📈</div>
+                    <div class="chart-name">Monthly Trend</div>
+                    <div class="chart-desc">Spending over time + rolling avg</div>
+                </div>
+                <div class="chart-item">
+                    <div class="chart-icon">🍩</div>
+                    <div class="chart-name">Category Donut</div>
+                    <div class="chart-desc">Spending by category with total</div>
+                </div>
+                <div class="chart-item">
+                    <div class="chart-icon">📊</div>
+                    <div class="chart-name">Income vs Expense</div>
+                    <div class="chart-desc">Grouped bars + net savings line</div>
+                </div>
+                <div class="chart-item">
+                    <div class="chart-icon">🏪</div>
+                    <div class="chart-name">Top Merchants</div>
+                    <div class="chart-desc">Ranked horizontal bar chart</div>
+                </div>
+                <div class="chart-item">
+                    <div class="chart-icon">📅</div>
+                    <div class="chart-name">Weekly Pattern</div>
+                    <div class="chart-desc">Avg daily spend by weekday</div>
+                </div>
+                <div class="chart-item">
+                    <div class="chart-icon">🏔️</div>
+                    <div class="chart-name">Category Trends</div>
+                    <div class="chart-desc">Stacked area over months</div>
+                </div>
+                <div class="chart-item">
+                    <div class="chart-icon">📐</div>
+                    <div class="chart-name">Distribution</div>
+                    <div class="chart-desc">Transaction size histogram</div>
+                </div>
+                <div class="chart-item">
+                    <div class="chart-icon">💹</div>
+                    <div class="chart-name">Cumulative Flow</div>
+                    <div class="chart-desc">Income vs expense area + gap</div>
+                </div>
+                <div class="chart-item">
+                    <div class="chart-icon">🗓️</div>
+                    <div class="chart-name">Monthly Heatmap</div>
+                    <div class="chart-desc">Category × month intensity</div>
+                </div>
+                <div class="chart-item">
+                    <div class="chart-icon">💰</div>
+                    <div class="chart-name">Savings Ratio</div>
+                    <div class="chart-desc">Monthly rate vs 20% target</div>
+                </div>
+                <div class="chart-item">
+                    <div class="chart-icon">⚡</div>
+                    <div class="chart-name">Transaction Scatter</div>
+                    <div class="chart-desc">Date × amount, color by category</div>
+                </div>
+                <div class="chart-item">
+                    <div class="chart-icon">🔍</div>
+                    <div class="chart-name">Category Deepdive</div>
+                    <div class="chart-desc">One category by merchant</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 04 — Guardrails -->
+    <section id="guardrails">
+        <div class="container">
+            <span class="section-label">04 — Security</span>
+            <h2 class="section-title">
+                12 guardrails, <span class="highlight">zero compromises</span>
+            </h2>
+            <p class="section-subtitle">
+                Production-grade security across input, output, and operational layers.
+                Every request passes through all checks before reaching the LLM.
+            </p>
+
+            <div class="guardrail-grid">
+                <div class="guardrail-item">
+                    <div class="guardrail-icon">🔤</div>
+                    <div>
+                        <h4>Unicode Normalization</h4>
+                        <p>NFKC normalization + zero-width char stripping defeats homoglyph bypass attacks</p>
+                    </div>
+                </div>
+                <div class="guardrail-item">
+                    <div class="guardrail-icon">🛡️</div>
+                    <div>
+                        <h4>Prompt Injection Detection</h4>
+                        <p>16 regex patterns catch "ignore instructions", jailbreak, DAN mode, role hijacking</p>
+                    </div>
+                </div>
+                <div class="guardrail-item">
+                    <div class="guardrail-icon">🔒</div>
+                    <div>
+                        <h4>Cross-User Leakage Prevention</h4>
+                        <p>Blocks any reference to other user IDs or "another user" patterns</p>
+                    </div>
+                </div>
+                <div class="guardrail-item">
+                    <div class="guardrail-icon">🎯</div>
+                    <div>
+                        <h4>Scope Validation</h4>
+                        <p>100+ financial keywords + conversational whitelist ensure on-topic queries</p>
+                    </div>
+                </div>
+                <div class="guardrail-item">
+                    <div class="guardrail-icon">✂️</div>
+                    <div>
+                        <h4>Input Length Truncation</h4>
+                        <p>Hard cap at 500 chars prevents oversized prompts from abusing context</p>
+                    </div>
+                </div>
+                <div class="guardrail-item">
+                    <div class="guardrail-icon">🧹</div>
+                    <div>
+                        <h4>XSS Sanitization</h4>
+                        <p>14 patterns strip &lt;script&gt;, &lt;iframe&gt;, on*= handlers, javascript: URIs from output</p>
+                    </div>
+                </div>
+                <div class="guardrail-item">
+                    <div class="guardrail-icon">📐</div>
+                    <div>
+                        <h4>Hallucination Grounding</h4>
+                        <p>Every dollar amount in LLM output is validated against actual data (10% tolerance)</p>
+                    </div>
+                </div>
+                <div class="guardrail-item">
+                    <div class="guardrail-icon">🤔</div>
+                    <div>
+                        <h4>Confidence Detection</h4>
+                        <p>Flags "I'm not sure" and "insufficient data" responses for review</p>
+                    </div>
+                </div>
+                <div class="guardrail-item">
+                    <div class="guardrail-icon">🚫</div>
+                    <div>
+                        <h4>Toxicity Filter</h4>
+                        <p>Keyword-based filter catches offensive, violent, or inappropriate LLM output</p>
+                    </div>
+                </div>
+                <div class="guardrail-item">
+                    <div class="guardrail-icon">⚡</div>
+                    <div>
+                        <h4>Circuit Breaker</h4>
+                        <p>Trips after 5 consecutive LLM failures, auto-resets after 60 seconds</p>
+                    </div>
+                </div>
+                <div class="guardrail-item">
+                    <div class="guardrail-icon">📋</div>
+                    <div>
+                        <h4>Audit Logging</h4>
+                        <p>Hashed user IDs, truncated prompts, latency, flags — every request is logged</p>
+                    </div>
+                </div>
+                <div class="guardrail-item">
+                    <div class="guardrail-icon">⏱️</div>
+                    <div>
+                        <h4>Rate Limiting</h4>
+                        <p>10 req/min per user, 60 req/min global — sliding window, in-memory</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 05 — Tech Stack -->
+    <section id="tech">
+        <div class="container">
+            <span class="section-label">05 — Tech Stack</span>
+            <h2 class="section-title">
+                Built with <span class="highlight">modern tools</span>
+            </h2>
+
+            <div class="tech-grid">
+                <div class="tech-tag"><span class="dot dot-blue"></span> Python 3.12</div>
+                <div class="tech-tag"><span class="dot dot-green"></span> FastAPI</div>
+                <div class="tech-tag"><span class="dot dot-purple"></span> Sarvam AI (BYOK)</div>
+                <div class="tech-tag"><span class="dot dot-yellow"></span> OpenRouter</div>
+                <div class="tech-tag"><span class="dot dot-teal"></span> Plotly 6.7</div>
+                <div class="tech-tag"><span class="dot dot-red"></span> Kaleido</div>
+                <div class="tech-tag"><span class="dot dot-blue"></span> Pandas 3.0</div>
+                <div class="tech-tag"><span class="dot dot-green"></span> Uvicorn</div>
+                <div class="tech-tag"><span class="dot dot-purple"></span> Pydantic v2</div>
+                <div class="tech-tag"><span class="dot dot-yellow"></span> Tailwind CSS</div>
+                <div class="tech-tag"><span class="dot dot-teal"></span> Docker</div>
+                <div class="tech-tag"><span class="dot dot-red"></span> Render.com</div>
+            </div>
+
+            <div class="cards-grid" style="margin-top: 40px;">
+                <div class="card">
+                    <div class="card-icon">🏗️</div>
+                    <h3>Architecture</h3>
+                    <p><strong>Frontend:</strong> Single-file HTML + Tailwind CSS + vanilla JS<br>
+                    <strong>Backend:</strong> FastAPI with SSE streaming<br>
+                    <strong>LLM:</strong> Tool-calling with 12 chart schemas<br>
+                    <strong>Cache:</strong> In-memory KV with TTL + LRU eviction<br>
+                    <strong>Deploy:</strong> Docker multi-stage → Render.com</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon teal">🔀</div>
+                    <h3>LLM Model Chain</h3>
+                    <p><strong>Primary (Sarvam AI):</strong><br>
+                    sarvam-105b → sarvam-30b<br><br>
+                    <strong>Fallback (OpenRouter):</strong><br>
+                    Nemotron 120B → GLM 4.5 → GPT-OSS 120B → MiniMax → Gemma 31B → Nemotron 9B</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 06 — Setup -->
+    <section id="setup">
+        <div class="container">
+            <span class="section-label">06 — Quick Start</span>
+            <h2 class="section-title">
+                Up and running<br>in <span class="highlight">3 steps</span>
+            </h2>
+
+            <div class="code-block">
+                <span class="comment"># 1. Clone and install</span><br>
+                <span class="var">$</span> git clone https://github.com/pratiksinha312511/Tabular_RAG_pipeline.git<br>
+                <span class="var">$</span> <span class="keyword">cd</span> Tabular_RAG_pipeline<br>
+                <span class="var">$</span> python -m venv .venv <span class="keyword">&&</span> .venv\Scripts\activate<br>
+                <span class="var">$</span> pip install -r requirements.txt<br>
+                <br>
+                <span class="comment"># 2. Configure environment</span><br>
+                <span class="var">$</span> cp .env.example .env<br>
+                <span class="comment"># Edit .env — add your SARVAM_API_KEY or OPENROUTER_API_KEY</span><br>
+                <br>
+                <span class="comment"># 3. Run</span><br>
+                <span class="var">$</span> python server.py<br>
+                <span class="comment"># → Open http://localhost:8000</span>
+            </div>
+
+            <h3 style="margin-top: 48px; font-size: 1.1rem; font-weight: 700;">Environment Variables</h3>
+
+            <table class="env-table">
+                <thead>
+                    <tr>
+                        <th>Variable</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>SARVAM_API_KEY</code></td>
+                        <td>Sarvam AI API key (primary LLM provider, BYOK)</td>
+                    </tr>
+                    <tr>
+                        <td><code>OPENROUTER_API_KEY</code></td>
+                        <td>OpenRouter API key (fallback provider, free models)</td>
+                    </tr>
+                    <tr>
+                        <td><code>CSV_FILE</code></td>
+                        <td>Transaction CSV filename in <code>data/</code> folder</td>
+                    </tr>
+                    <tr>
+                        <td><code>LLM_PROVIDER</code></td>
+                        <td>Force provider: <code>sarvam</code> or <code>openrouter</code> (default: auto-detect)</td>
+                    </tr>
+                    <tr>
+                        <td><code>PORT</code></td>
+                        <td>Server port (default: 8000, auto-set by Render/Railway)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 07 — Deploy -->
+    <section>
+        <div class="container">
+            <span class="section-label">07 — Deploy</span>
+            <h2 class="section-title">
+                One-click deploy<br>to <span class="highlight">Render.com</span>
+            </h2>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-icon">1️⃣</div>
+                    <h3>Connect GitHub</h3>
+                    <p>Go to render.com → New Web Service → connect your GitHub repo. Render auto-detects the Dockerfile.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon teal">2️⃣</div>
+                    <h3>Set Environment</h3>
+                    <p>Add SARVAM_API_KEY, OPENROUTER_API_KEY, and CSV_FILE in the Environment tab. Render handles PORT automatically.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">3️⃣</div>
+                    <h3>Deploy</h3>
+                    <p>Click "Create Web Service". Docker builds in ~3 min, health check runs on /api/users, and your app is live.</p>
+                </div>
+            </div>
+
+            <div class="code-block" style="margin-top: 32px;">
+                <span class="comment"># Or deploy with Docker locally</span><br>
+                <span class="var">$</span> docker build -t vola-ai .<br>
+                <span class="var">$</span> docker run -p 8000:8000 --env-file .env vola-ai<br>
+                <span class="comment"># → Open http://localhost:8000</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p style="margin-bottom: 8px;">
+                <strong>Vola AI</strong> · Tabular RAG Pipeline · Python + FastAPI + Sarvam AI + Plotly
+            </p>
+            <p>
+                Built by <a href="https://github.com/pratiksinha312511" target="_blank">Pratik Sinha</a> ·
+                <a href="https://github.com/pratiksinha312511/Tabular_RAG_pipeline" target="_blank">View Source ↗</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
