@@ -188,27 +188,7 @@
             background: rgba(0,212,170,0.1); color: var(--teal);
         }
 
-        /* ── Talking points ── */
-        .talk-box {
-            background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(0,212,170,0.05));
-            border: 1px solid rgba(124,58,237,0.25); border-radius: 12px;
-            padding: 20px 24px; margin: 20px 0;
-        }
-        .talk-box h4 {
-            font-size: 0.82rem; font-weight: 700; color: var(--teal);
-            margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase;
-        }
-        .talk-box ul {
-            list-style: none; padding: 0;
-        }
-        .talk-box li {
-            font-size: 0.85rem; color: var(--text); line-height: 1.8;
-            padding-left: 20px; position: relative;
-        }
-        .talk-box li::before {
-            content: '→'; position: absolute; left: 0; color: var(--accent-bright);
-            font-weight: 700;
-        }
+
 
         /* ── Stats grid ── */
         .stats-grid {
@@ -347,14 +327,7 @@ graph TD
             <p class="diagram-caption">Every query passes through all 4 stages. No shortcuts, no bypasses.</p>
         </div>
 
-        <div class="talk-box">
-            <h4>🎤 Interview Talking Points</h4>
-            <ul>
-                <li><strong>"The pipeline is deterministic."</strong> — Every request hits all 4 stages in order. Input guardrails always run before the LLM sees anything.</li>
-                <li><strong>"Three response paths."</strong> — LLM can return tool calls (charts), plain text, or fail entirely. Each path is handled gracefully.</li>
-                <li><strong>"Zero-downtime fallback."</strong> — If all 8 LLM models fail, 31 keyword-based intent handlers generate data-driven responses from the raw DataFrame. The user never sees an error.</li>
-            </ul>
-        </div>
+
     </div>
 </section>
 
@@ -458,14 +431,7 @@ graph LR
                         <tr><td><code>NumpyEncoder</code></td><td>Custom JSON encoder for numpy/pandas types → native Python.</td></tr>
                     </tbody>
                 </table>
-                <div class="talk-box">
-                    <h4>🎤 How to explain server.py</h4>
-                    <ul>
-                        <li>"It's a thin layer — receives HTTP, validates, delegates to pipeline.py, streams back."</li>
-                        <li>"SSE (Server-Sent Events) instead of WebSocket — simpler, one-directional, works through proxies."</li>
-                        <li>"Charts are encoded as base64 data URIs inline in SSE events — no separate image fetch needed."</li>
-                    </ul>
-                </div>
+
             </div>
         </div>
 
@@ -496,14 +462,7 @@ graph LR
                         <tr><td><code>_extract_time_period()</code></td><td>Parses "last 3 months", "since January", "this quarter" into month counts.</td></tr>
                     </tbody>
                 </table>
-                <div class="talk-box">
-                    <h4>🎤 How to explain pipeline.py</h4>
-                    <ul>
-                        <li>"It's the orchestrator — it doesn't do HTTP, doesn't do LLM calls, doesn't draw charts. It delegates to specialized modules and coordinates the flow."</li>
-                        <li>"The fallback system means the app works even with zero LLM connectivity. 31 handlers cover every common financial question using just pandas."</li>
-                        <li>"Proactive conversations are built in — every response ends with a contextual question, driving the user to explore more."</li>
-                    </ul>
-                </div>
+
             </div>
         </div>
 
@@ -702,14 +661,7 @@ graph TD
             </div>
         </div>
 
-        <div class="talk-box">
-            <h4>🎤 How to explain Stage 1</h4>
-            <ul>
-                <li><strong>"Defense in depth."</strong> — Unicode normalization runs first because injection patterns won't match if the attacker uses look-alike characters (homoglyphs).</li>
-                <li><strong>"The scope check is smart."</strong> — It doesn't just look for financial keywords. Conversational patterns like "what can you do?" always pass through. Helper words + financial keywords also pass ("how much did I spend").</li>
-                <li><strong>"Cross-user leakage is critical for multi-tenant."</strong> — With 30 users sharing one pipeline, we check that no prompt references another user's ID or uses phrases like "another user".</li>
-            </ul>
-        </div>
+
     </div>
 </section>
 
@@ -742,14 +694,7 @@ graph TD
             </div>
         </div>
 
-        <div class="talk-box">
-            <h4>🎤 How to explain Stage 2</h4>
-            <ul>
-                <li><strong>"The system prompt is ~8K characters."</strong> — It includes the user's actual financial data (top categories, avg spend), so the LLM can give personalized answers without querying the DataFrame every time.</li>
-                <li><strong>"Token budget prevents context overflow."</strong> — If conversation history + system prompt exceeds 4000 tokens, older messages are trimmed first. The system prompt and latest user message are always preserved.</li>
-                <li><strong>"The cache has TTL + LRU."</strong> — Profiles expire after 30 minutes (data freshness). If we hit 100 cached users, the least-recently-used one gets evicted (memory management).</li>
-            </ul>
-        </div>
+
     </div>
 </section>
 
@@ -790,14 +735,7 @@ graph TD
             </div>
         </div>
 
-        <div class="talk-box">
-            <h4>🎤 How to explain Stage 3</h4>
-            <ul>
-                <li><strong>"Intent intercepts bypass the LLM for known patterns."</strong> — Budget, subscription, and report requests have specialized handlers that produce better results than a generic LLM call.</li>
-                <li><strong>"Tool calling is how charts happen."</strong> — The LLM sees 12 function schemas (TOOL_SCHEMAS). When it returns a tool_call like <code>plot_monthly_spending_trend({months: 6})</code>, we execute the matching function from VIZ_FUNCTIONS.</li>
-                <li><strong>"The fallback system is the safety net."</strong> — 31 keyword-based handlers match things like 'budget', 'merchant', 'savings', 'trend', 'heatmap'. Each generates a data-driven response from the DataFrame + relevant charts."</li>
-            </ul>
-        </div>
+
 
         <h3 style="margin-top: 40px; font-size: 1.1rem; font-weight: 700;">All 31 Intent Handlers</h3>
         <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px;">
@@ -868,14 +806,7 @@ graph TD
             </div>
         </div>
 
-        <div class="talk-box">
-            <h4>🎤 How to explain Stage 4</h4>
-            <ul>
-                <li><strong>"Hallucination grounding is the key innovation."</strong> — We extract every dollar amount from the LLM's response, check it against the actual DataFrame summary, and flag anything that's off by more than 10%. This prevents the LLM from inventing numbers.</li>
-                <li><strong>"XSS sanitization on LLM output."</strong> — LLMs can be tricked into outputting malicious HTML. We strip 14 categories of dangerous content (script tags, event handlers, iframes, javascript: URIs) from every response.</li>
-                <li><strong>"Every response drives the conversation forward."</strong> — <code>_generate_followup_question()</code> analyzes what the user just asked and appends 2-3 contextual numbered options. This keeps users engaged.</li>
-            </ul>
-        </div>
+
     </div>
 </section>
 
@@ -914,15 +845,7 @@ graph TD
             </div>
         </div>
 
-        <div class="talk-box">
-            <h4>🎤 How to explain the LLM client</h4>
-            <ul>
-                <li><strong>"BYOK = Bring Your Own Key."</strong> — Users can use their own Sarvam AI key (paid, higher quality) or the default OpenRouter key (free tier). The client auto-detects which is available.</li>
-                <li><strong>"Model chain, not single model."</strong> — If sarvam-105b fails, it tries sarvam-30b. On OpenRouter, 6 different models from different providers (Nvidia, Google, MiniMax, etc.) ensure at least one is up.</li>
-                <li><strong>"Smart retry."</strong> — 429 (rate limited) = skip to next model immediately (waiting won't help). 503 (server down) = exponential backoff and retry (might recover). Other errors = skip to next model.</li>
-                <li><strong>"Circuit breaker prevents cascade."</strong> — After 5 consecutive failures, the circuit opens for 60 seconds. During this window, we go straight to fallback handlers instead of wasting time on failing API calls.</li>
-            </ul>
-        </div>
+
     </div>
 </section>
 
@@ -954,15 +877,7 @@ graph TD
             </div>
         </div>
 
-        <div class="talk-box">
-            <h4>🎤 How to explain the chart system</h4>
-            <ul>
-                <li><strong>"Server-side rendering, not client-side."</strong> — Charts are PNG images generated on the server. The browser just displays an &lt;img&gt; tag. No JavaScript charting library needed on the client.</li>
-                <li><strong>"LLM decides which chart to show."</strong> — The 12 tool schemas are in the system prompt. The LLM reasons about the query and returns a tool_call with the right function name and parameters.</li>
-                <li><strong>"Kaleido + Chromium."</strong> — Kaleido 1.2.0 uses a headless Chromium browser to render Plotly charts as PNG. In Docker, we install the full Chromium binary and set CHROME_PATH.</li>
-                <li><strong>"Every chart gets an explanation."</strong> — <code>_explain_chart()</code> analyzes the chart type and user data to generate a narrative like 'Your spending peaked in March at $2,400'."</li>
-            </ul>
-        </div>
+
     </div>
 </section>
 
@@ -997,14 +912,7 @@ graph TD
             </div>
         </div>
 
-        <div class="talk-box">
-            <h4>🎤 How to explain the follow-up system</h4>
-            <ul>
-                <li><strong>"Two-part system."</strong> — Output side: <code>_generate_followup_question()</code> appends contextual options. Input side: <code>_resolve_followup()</code> converts short replies back into full queries.</li>
-                <li><strong>"Topic words are the clever part."</strong> — If the user just types "groceries" (≤5 words, not a number, not yes/no), we rewrite it as "show groceries transactions" which then routes correctly through the category handler.</li>
-                <li><strong>"It creates a natural conversation loop."</strong> — Ask → Answer with follow-up → User clicks/types option → Resolve → Ask again. The AI drives the dialogue forward.</li>
-            </ul>
-        </div>
+
     </div>
 </section>
 
@@ -1046,15 +954,7 @@ graph LR
             </div>
         </div>
 
-        <div class="talk-box">
-            <h4>🎤 How to explain deployment</h4>
-            <ul>
-                <li><strong>"Multi-stage Docker."</strong> — Stage 1 installs pip packages into a prefix directory. Stage 2 is the clean production image — copies packages + installs Chromium. Smaller final image.</li>
-                <li><strong>"Non-root user."</strong> — <code>appuser</code> runs the server. Even if there's an exploit, the attacker can't modify system files.</li>
-                <li><strong>"Chromium in Docker."</strong> — Kaleido 1.2.0 needs a real browser binary to render charts. We install the <code>chromium</code> package and set <code>CHROME_PATH</code> env var.</li>
-                <li><strong>"Health check."</strong> — Render pings <code>GET /api/users</code> every 30 seconds. If it fails 3 times, the service restarts.</li>
-            </ul>
-        </div>
+
 
         <h3 style="margin-top: 40px; font-size: 1.1rem; font-weight: 700;">Tech Stack Summary</h3>
         <table class="fn-table" style="margin-top: 16px;">
